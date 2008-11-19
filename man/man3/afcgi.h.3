@@ -1,0 +1,137 @@
+.TH "afcgi.h" 3 "19 Nov 2008" "Version 0" "events" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+afcgi.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <events.h>\fP
+.br
+
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBafcgi_binder\fP"
+.br
+.ti -1c
+.RI "struct \fBafcgi\fP"
+.br
+.ti -1c
+.RI "struct \fBafcgi_hdr\fP"
+.br
+.ti -1c
+.RI "struct \fBafcgi_sess\fP"
+.br
+.in -1c
+.SS "Defines"
+
+.in +1c
+.ti -1c
+.RI "#define \fBafcgi_set_callback\fP(sess, name, cb)   afcgi_set_cb_ ## name(sess, cb)"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBafcgi_callback_names\fP "
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "static void \fBafcgi_set_arg\fP (struct afcgi_sess *s, void *arg)"
+.br
+.ti -1c
+.RI "void \fBafcgi_init\fP (int maxconn)"
+.br
+.ti -1c
+.RI "int \fBafcgi_bind\fP (char *bind, afcgi_cb on_new, void *arg)"
+.br
+.ti -1c
+.RI "void \fBafcgi_loop\fP (int loop)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SH "Define Documentation"
+.PP 
+.SS "#define afcgi_set_callback(sess, name, cb)   afcgi_set_cb_ ## name(sess, cb)"
+.PP
+set callback 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsess\fP fascgi session identifier 
+.br
+\fIname\fP callback name 
+.br
+\fIcb\fP calback pointer 
+.RE
+.PP
+
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBafcgi_callback_names\fP"
+.PP
+The names of the different callbacks 
+.SH "Function Documentation"
+.PP 
+.SS "int afcgi_bind (char * bind, afcgi_cb on_new, void * arg)"
+.PP
+Bind network address or socket 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbind\fP network address or socket (or NULL for stdin) 
+.br
+\fIon_new\fP callback called for new connexion 
+.br
+\fIarg\fP easy arg 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+if ok return 0, else return < 0 
+.RE
+.PP
+
+.SS "void afcgi_init (int maxconn)"
+.PP
+init fcgi internals and poller system 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImaxconn\fP The maximun of connection expected (all sockets) -1: use the max limit (ulimit -n) >0: use this value, ans set limit 
+.RE
+.PP
+
+.SS "void afcgi_loop (int loop)"
+.PP
+afcgi main loop. This launched the main loop after initialization 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIloop\fP (boolean) 0: the function return, 1: the function never return 
+.RE
+.PP
+
+.SS "static void afcgi_set_arg (struct afcgi_sess * s, void * arg)\fC [inline, static]\fP"
+.PP
+set easy argument 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIs\fP fascgi session identifier 
+.br
+\fIarg\fP easy argument 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for events from the source code.
