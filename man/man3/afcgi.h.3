@@ -1,4 +1,4 @@
-.TH "afcgi.h" 3 "19 Nov 2008" "Version 0" "events" \" -*- nroff -*-
+.TH "afcgi.h" 3 "20 Nov 2008" "Version 0" "events" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -13,16 +13,16 @@ afcgi.h \-
 
 .in +1c
 .ti -1c
-.RI "struct \fBafcgi_binder\fP"
+.RI "struct \fBafcgi_hdr\fP"
+.br
+.ti -1c
+.RI "struct \fBafcgi_sess\fP"
 .br
 .ti -1c
 .RI "struct \fBafcgi\fP"
 .br
 .ti -1c
-.RI "struct \fBafcgi_hdr\fP"
-.br
-.ti -1c
-.RI "struct \fBafcgi_sess\fP"
+.RI "struct \fBafcgi_binder\fP"
 .br
 .in -1c
 .SS "Defines"
@@ -30,6 +30,19 @@ afcgi.h \-
 .in +1c
 .ti -1c
 .RI "#define \fBafcgi_set_callback\fP(sess, name, cb)   afcgi_set_cb_ ## name(sess, cb)"
+.br
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef void(*) \fBafcgi_cb\fP (struct afcgi_sess *s, void *arg)"
+.br
+.ti -1c
+.RI "typedef void(*) \fBafcgi_cb_data\fP (struct afcgi_sess *s, void *arg, char *data, int len)"
+.br
+.ti -1c
+.RI "typedef int(*) \fBafcgi_cb_write\fP (struct afcgi_sess *s, void *arg, char *data, int len)"
 .br
 .in -1c
 .SS "Enumerations"
@@ -49,7 +62,7 @@ afcgi.h \-
 .RI "void \fBafcgi_init\fP (int maxconn)"
 .br
 .ti -1c
-.RI "int \fBafcgi_bind\fP (char *bind, afcgi_cb on_new, void *arg)"
+.RI "int \fBafcgi_bind\fP (char *bind, \fBafcgi_cb\fP on_new, void *arg)"
 .br
 .ti -1c
 .RI "void \fBafcgi_loop\fP (int loop)"
@@ -74,6 +87,57 @@ set callback
 .RE
 .PP
 
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef void(*) \fBafcgi_cb\fP(struct afcgi_sess *s, void *arg)"
+.PP
+used for standard afcgi callbacks 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIs\fP is afcgi session 
+.br
+\fIarg\fP is easy argument 
+.RE
+.PP
+
+.SS "typedef void(*) \fBafcgi_cb_data\fP(struct afcgi_sess *s, void *arg, char *data, int len)"
+.PP
+used for standard afcgi input callbacks 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIs\fP is afcgi session 
+.br
+\fIarg\fP is easy argument 
+.br
+\fIdata\fP is buffer containing data 
+.br
+\fIlen\fP is data length 
+.RE
+.PP
+
+.SS "typedef int(*) \fBafcgi_cb_write\fP(struct afcgi_sess *s, void *arg, char *data, int len)"
+.PP
+used for standard afcgi output callbacks 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIs\fP is afcgi session 
+.br
+\fIarg\fP is easy argument 
+.br
+\fIdata\fP is buffer receiving data 
+.br
+\fIlen\fP is max data length writable 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+return length writed 
+.RE
+.PP
+
 .SH "Enumeration Type Documentation"
 .PP 
 .SS "enum \fBafcgi_callback_names\fP"
@@ -81,7 +145,7 @@ set callback
 The names of the different callbacks 
 .SH "Function Documentation"
 .PP 
-.SS "int afcgi_bind (char * bind, afcgi_cb on_new, void * arg)"
+.SS "int afcgi_bind (char * bind, \fBafcgi_cb\fP on_new, void * arg)"
 .PP
 Bind network address or socket 
 .PP

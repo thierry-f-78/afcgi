@@ -24,16 +24,23 @@ Include dependency graph for afcgi.h:<p><center><img src="afcgi_8h__incl.png" bo
 <a href="afcgi_8h-source.html">Go to the source code of this file.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Data Structures</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>afcgi_binder</b></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>afcgi</b></td></tr>
-
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>afcgi_hdr</b></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>afcgi_sess</b></td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>afcgi</b></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>afcgi_binder</b></td></tr>
+
 <tr><td colspan="2"><br><h2>Defines</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#600d12d2fb6d3ade3a6c12ee81ce6258">afcgi_set_callback</a>(sess, name, cb)&nbsp;&nbsp;&nbsp;afcgi_set_cb_ ## name(sess, cb)</td></tr>
+
+<tr><td colspan="2"><br><h2>Typedefs</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef void(*)&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#f000732bbd43e116fc79b3df21b4cc24">afcgi_cb</a> (struct afcgi_sess *s, void *arg)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef void(*)&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#e29ecb4ccaaec9b0dbcbad41e375343f">afcgi_cb_data</a> (struct afcgi_sess *s, void *arg, char *data, int len)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef int(*)&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#157818286000804f4cbccc54de1f5926">afcgi_cb_write</a> (struct afcgi_sess *s, void *arg, char *data, int len)</td></tr>
 
 <tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#e9382f0ce76b67a2a9dd4c19353cb561">afcgi_callback_names</a> </td></tr>
@@ -43,7 +50,7 @@ Include dependency graph for afcgi.h:<p><center><img src="afcgi_8h__incl.png" bo
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#9517e849eb01d6e5b6f4f0597332d9e9">afcgi_init</a> (int maxconn)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#4a6ac5e0fb32cf2b952ce1c2bae08fa4">afcgi_bind</a> (char *bind, afcgi_cb on_new, void *arg)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#4a6ac5e0fb32cf2b952ce1c2bae08fa4">afcgi_bind</a> (char *bind, <a class="el" href="afcgi_8h.html#f000732bbd43e116fc79b3df21b4cc24">afcgi_cb</a> on_new, void *arg)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#4247fc3dc720e54ed029d1cd97166d6e">afcgi_loop</a> (int loop)</td></tr>
 
@@ -83,6 +90,75 @@ set callback <dl compact><dt><b>Parameters:</b></dt><dd>
 
 </div>
 </div><p>
+<hr><h2>Typedef Documentation</h2>
+<a class="anchor" name="f000732bbd43e116fc79b3df21b4cc24"></a><!-- doxytag: member="afcgi.h::afcgi_cb" ref="f000732bbd43e116fc79b3df21b4cc24" args="(struct afcgi_sess *s, void *arg)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(*) <a class="el" href="afcgi_8h.html#f000732bbd43e116fc79b3df21b4cc24">afcgi_cb</a>(struct afcgi_sess *s, void *arg)          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+used for standard afcgi callbacks <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>s</em>&nbsp;</td><td>is afcgi session </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>arg</em>&nbsp;</td><td>is easy argument </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="e29ecb4ccaaec9b0dbcbad41e375343f"></a><!-- doxytag: member="afcgi.h::afcgi_cb_data" ref="e29ecb4ccaaec9b0dbcbad41e375343f" args="(struct afcgi_sess *s, void *arg, char *data, int len)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(*) <a class="el" href="afcgi_8h.html#e29ecb4ccaaec9b0dbcbad41e375343f">afcgi_cb_data</a>(struct afcgi_sess *s, void *arg, char *data, int len)          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+used for standard afcgi input callbacks <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>s</em>&nbsp;</td><td>is afcgi session </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>arg</em>&nbsp;</td><td>is easy argument </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>data</em>&nbsp;</td><td>is buffer containing data </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>len</em>&nbsp;</td><td>is data length </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="157818286000804f4cbccc54de1f5926"></a><!-- doxytag: member="afcgi.h::afcgi_cb_write" ref="157818286000804f4cbccc54de1f5926" args="(struct afcgi_sess *s, void *arg, char *data, int len)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef int(*) <a class="el" href="afcgi_8h.html#157818286000804f4cbccc54de1f5926">afcgi_cb_write</a>(struct afcgi_sess *s, void *arg, char *data, int len)          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+used for standard afcgi output callbacks <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>s</em>&nbsp;</td><td>is afcgi session </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>arg</em>&nbsp;</td><td>is easy argument </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>data</em>&nbsp;</td><td>is buffer receiving data </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>len</em>&nbsp;</td><td>is max data length writable </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>return length writed </dd></dl>
+
+</div>
+</div><p>
 <hr><h2>Enumeration Type Documentation</h2>
 <a class="anchor" name="e9382f0ce76b67a2a9dd4c19353cb561"></a><!-- doxytag: member="afcgi.h::afcgi_callback_names" ref="e9382f0ce76b67a2a9dd4c19353cb561" args="" -->
 <div class="memitem">
@@ -113,7 +189,7 @@ The names of the different callbacks
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">afcgi_cb&nbsp;</td>
+          <td class="paramtype"><a class="el" href="afcgi_8h.html#f000732bbd43e116fc79b3df21b4cc24">afcgi_cb</a>&nbsp;</td>
           <td class="paramname"> <em>on_new</em>, </td>
         </tr>
         <tr>
@@ -228,7 +304,7 @@ set easy argument <dl compact><dt><b>Parameters:</b></dt><dd>
 
 </div>
 </div><p>
-<hr size="1"><address style="align: right;"><small>Generated on Wed Nov 19 23:48:46 2008 for events by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Thu Nov 20 23:08:30 2008 for events by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.1 </small></address>
 </body>
