@@ -5,7 +5,6 @@
 #include <string.h>
 
 #include "afcgi.h"
-#include "btree32.h"
 
 int afcgi_global_maxconn;
 
@@ -45,18 +44,11 @@ static void free_afcgi_sess(struct afcgi_sess *s) {
 }
 
 static void free_afcgi(struct afcgi *a) {
-	struct btree32 *b;
-	struct afcgi_sess *s;
+	int i;
 
-	while (1) {
-		b = btree32_get_min((struct btree32_node *)&a->tb);
-		if (b == NULL)
-			break;
-		btree32_remove(b);
-		s = btree32_get_data(b, struct afcgi_sess *);
-		free_afcgi_sess(s);
-		free(b);
-	}
+	for (i=0; i<(1<<16); i++)
+		if (a->sess[i] != NULL)
+			free_afcgi_sess(a->sess[i]);
 	free(a);
 }
 
@@ -74,9 +66,14 @@ static void new_read(int fd, void *arg) {
 	uint8_t ua, ub;
 	char *hdr;
 	int attr_sz, data_sz;
-	struct btree32 *bt;
-	int ret;
 	struct afcgi_hdr *shdr;
+
+	// retrieve afcgi session
+	s = a->sess[a->c.request_id];
+	if (s == NULL && a->s != WAIT_HEADER) {
+		conn_bye(a);
+		return;
+	}
 
 	switch ((enum afcgi_status)a->s) {
 
@@ -88,7 +85,7 @@ static void new_read(int fd, void *arg) {
 		a->s = WAIT_HEADER;
 
 	case WAIT_HEADER:
-		sz = FCGI_HEADER_LEN + (char *)&a->c - a->head;
+		sz = AFCGI_HEADER_LEN + (char *)&a->c - a->head;
 		sz = read(a->fd, a->head, sz);
 		if (sz < 0)
 			return;
@@ -101,7 +98,7 @@ static void new_read(int fd, void *arg) {
 		else if (sz > 0)
 			a->head += sz;
 
-		if (a->head - (char *)&a->c < FCGI_HEADER_LEN)
+		if (a->head - (char *)&a->c < AFCGI_HEADER_LEN)
 			return;
 
 		// adjust values
@@ -112,6 +109,7 @@ static void new_read(int fd, void *arg) {
 		ub = ((char *)&a->c)[5];
 		a->c.content_len = ( ua << 8 ) | ub;
 
+		/*
 		fprintf(stderr, "Headers:       \n"
 		                "  version    : %d\n"
 		                "  type       : %d\n"
@@ -120,6 +118,13 @@ static void new_read(int fd, void *arg) {
 		                "  padding_len: %d\n",
 		                a->c.version, a->c.type, a->c.request_id,
 		                a->c.content_len, a->c.padding_len);
+		*/
+		// retrieve afcgi session
+		s = a->sess[a->c.request_id];
+		if (s == NULL && a->c.type != AFCGI_BEGIN_REQUEST) {
+			conn_bye(a);
+			return;
+		}
 
 		// next state
 		switch ((enum afcgi_types)a->c.type) {
@@ -150,40 +155,17 @@ static void new_read(int fd, void *arg) {
 		}
 		a->s = WAIT_REQUEST_HDR;
 
-		s = (struct afcgi_sess *)malloc(sizeof(struct afcgi_sess));
+		s = (struct afcgi_sess *)calloc(1, sizeof(struct afcgi_sess));
 		if (s == NULL) {
 			conn_bye(a);
 			return;
 		}
-		s->hdr = NULL;
 		s->head = (char *)&s->h;
 		s->request_id = a->c.request_id;
-		s->arg = NULL;
-		s->on_headers = NULL;
-		s->on_receive = NULL;
-		s->on_run = NULL;
-		s->on_abort = NULL;
-
-		bt = btree32_new();
-		if (bt == NULL) {
-			conn_bye(a);
-			return;
-		}
-		btree32_build(bt, s->request_id, s);
-		ret = btree32_insert((struct btree32_node *)&a->tb, bt, 0);
-		if (ret != 0) {
-			conn_bye(a);
-			return;
-		}
+		s->afcgi= a;
+		a->sess[s->request_id] = s;
 
 	case WAIT_REQUEST_HDR:
-		bt = btree32_exists((struct btree32_node *)&a->tb, s->request_id);
-		if (bt == NULL) {
-			conn_bye(a);
-			return;
-		}
-		s = btree32_get_data(bt, struct afcgi_sess *);
-
 		sz = 8 + (char *)&s->h - s->head;
 		sz = read(a->fd, s->head, sz);
 		if (sz < 0)
@@ -205,11 +187,12 @@ static void new_read(int fd, void *arg) {
 		ub = ((char *)&s->h)[1];
 		s->h.role  = ( ua << 8 ) | ub;
 
+		/*
 		fprintf(stderr, "begin request headers:\n"
 		                "  role       : %d\n"
 		                "  flags      : 0x%02x\n",
 		                s->h.role, s->h.flags);
-
+		*/
 		// callback on new
 		a->binder->on_new(s, a->binder->arg);
 
@@ -220,20 +203,15 @@ static void new_read(int fd, void *arg) {
 	********************************************/
 	case_WAIT_PARAMS:
 		// bloc vide: fin des headers http
-		if (a->c.content_len == 0)
+		if (a->c.content_len == 0) {
+			s->on_headers(s, s->arg);
 			goto case_WAIT_HEADER;
+		}
 		a->s = WAIT_PARAMS;
 		a->buff = a->buffer;
 		a->buff_len = 0;
 
 	case WAIT_PARAMS:
-
-		bt = btree32_exists((struct btree32_node *)&a->tb, s->request_id);
-		if (bt == NULL) {
-			conn_bye(a);
-			return;
-		}
-		s = btree32_get_data(bt, struct afcgi_sess *);
 
 		sz = a->c.content_len - a->buff_len;
 		sz = read(a->fd, a->buff, sz);
@@ -303,9 +281,11 @@ static void new_read(int fd, void *arg) {
 			shdr->value     = sb;
 			shdr->value_len = data_sz;
 			shdr->next      = s->hdr;
-			s->hdr          = shdr->next;
+			s->hdr          = shdr;
 
+			/*
 			fprintf(stderr, "(%d,%d)\t<%s>: <%s>\n", attr_sz, data_sz, sa, sb);
+			*/
 		}
 
 		goto case_WAIT_HEADER;
@@ -314,10 +294,94 @@ static void new_read(int fd, void *arg) {
 	* wait for params
 	********************************************/
 	case_WAIT_AFCGI_STDIN:
+
+		// bloc vide: fin des data stdin
+		if (a->c.content_len == 0) {
+			// call back
+			s->on_run(s, s->arg);
+			goto case_WAIT_HEADER;
+		}
+
+		a->s = WAIT_PARAMS;
+		a->buff = a->buffer;
+		a->buff_len = 0;
+
 	case WAIT_AFCGI_STDIN:
+
+		sz = a->c.content_len - a->buff_len;
+		sz = read(a->fd, a->buff, sz);
+		if (sz <= 0) {
+			conn_bye(a);
+			return;
+		}
+
+		if (sz > 0)
+			a->buff_len += sz;
+
+		if (a->buff_len < a->c.content_len)
+			return;
+
+		// callback data ready
+		s->on_receive(s, s->arg, a->buffer, a->buff_len);
 		goto case_WAIT_HEADER;
 	}
 
+}
+
+static void new_write(int fd, void *arg) {
+	struct afcgi *a = arg;
+	int len;
+	char *s;
+	
+	// try writing
+	if (a->write_len > 0) {
+		len = write(a->fd, a->write_start, a->write_len);
+		if (len <= 0)
+			return;
+		else {
+			a->write_start += len;
+			a->write_len   -= len;
+		}
+		if (a->write_len == 0) {
+			a->write_start = a->write_buffer;
+		}
+	}
+
+	// callback
+	s = a->write_start + AFCGI_HEADER_LEN + a->write_len;
+	len = a->write->on_write(a->write, a->write->arg, s, s - a->write_buffer);
+
+	// build header
+	if (len > 0) {
+		s -= AFCGI_HEADER_LEN;
+
+		// unsigned char version;
+		s[0] = AFCGI_VERSION;
+
+		// unsigned char type;
+		s[1] = AFCGI_STDOUT;
+
+		// unsigned char requestIdB1;
+		// unsigned char requestIdB0;
+		s[2] = a->write->request_id >> 8;
+		s[3] = a->write->request_id & 0x00ff;
+
+		// unsigned char contentLengthB1;
+		// unsigned char contentLengthB0;
+		s[4] = len >> 8;
+		s[5] = len & 0x00ff;
+
+		// unsigned char paddingLength;
+		s[6] = 0;
+
+		// unsigned char reserved;
+		s[7] = 0;
+
+		a->write_len  += len + AFCGI_HEADER_LEN;
+	}
+
+	// rotate
+	a->write = a->write->write_next;
 }
 
 static void new_conn(int l, void *arg) {
@@ -332,8 +396,36 @@ static void new_conn(int l, void *arg) {
 	a->s = WAIT_HEADER;
 	a->head = (char *)&a->c;
 	a->binder = binder;
-	btree32_init_base((struct btree32_node *)&a->tb);
+	a->write = NULL;
+	a->write_start = a->buffer;
+	a->write_len = 0;
 	ev_poll_fd_set(fd, EV_POLL_READ, new_read, a);
+}
+
+void afcgi_want_write(struct afcgi_sess *s) {
+	struct afcgi_sess *s0;
+	if (s->afcgi->write == NULL) {
+		s->afcgi->write = s;
+		s->write_next = s;
+		s->write_prev = s;
+	} else {
+		s0 = s->afcgi->write;
+		s->write_next              = s0;
+		s->write_prev              = s0->write_prev;
+		s0->write_prev->write_next = s;
+		s0->write_prev             = s;
+	}
+	ev_poll_fd_set(s->afcgi->fd, EV_POLL_WRITE, new_write, s->afcgi);
+}
+
+void afcgi_stop_write(struct afcgi_sess *s) {
+	if (s->write_next == s) {
+		s->afcgi->write = NULL;
+		ev_poll_fd_clr(s->afcgi->fd, EV_POLL_WRITE);
+	} else {
+		s->write_next->write_prev = s->write_prev;
+		s->write_prev->write_next = s->write_next;
+	}  
 }
 
 int afcgi_bind(char *bind, afcgi_cb on_new, void *arg) {
