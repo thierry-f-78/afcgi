@@ -8,6 +8,8 @@ afcgi.h \-
 .PP
 \fC#include <events.h>\fP
 .br
+\fC#include <rotbuffer.h>\fP
+.br
 
 .SS "Data Structures"
 
@@ -20,9 +22,6 @@ afcgi.h \-
 .br
 .ti -1c
 .RI "struct \fBafcgi\fP"
-.br
-.ti -1c
-.RI "struct \fBafcgi::rotbuffer\fP"
 .br
 .ti -1c
 .RI "struct \fBafcgi_binder\fP"
@@ -42,10 +41,7 @@ afcgi.h \-
 .RI "typedef void(*) \fBafcgi_cb\fP (struct afcgi_sess *s, void *arg)"
 .br
 .ti -1c
-.RI "typedef void(*) \fBafcgi_cb_data\fP (struct afcgi_sess *s, void *arg, char *data, int len)"
-.br
-.ti -1c
-.RI "typedef int(*) \fBafcgi_cb_write\fP (struct afcgi_sess *s, void *arg, char *data, int len)"
+.RI "typedef void(*) \fBafcgi_cb_data\fP (struct afcgi_sess *s, void *arg, int len)"
 .br
 .in -1c
 .SS "Enumerations"
@@ -55,7 +51,7 @@ afcgi.h \-
 .RI "enum \fBafcgi_callback_names\fP { \fBON_HEADERS\fP =  0, \fBON_RECEIVE\fP, \fBON_DATA_RECV\fP, \fBON_RUN\fP, \fBON_END_OF_DATA\fP, \fBON_WRITE\fP, \fBON_ABORT\fP }"
 .br
 .ti -1c
-.RI "enum \fBafcgi_return_status\fP { \fBFCGI_REQUEST_COMPLETE\fP =  0, \fBFCGI_CANT_MPX_CONN\fP =  1, \fBFCGI_OVERLOADED\fP =  2, \fBFCGI_UNKNOWN_ROLE\fP =  3 }"
+.RI "enum \fBafcgi_return_status\fP { \fBAFCGI_REQUEST_COMPLETE\fP =  0, \fBAFCGI_CANT_MPX_CONN\fP =  1, \fBAFCGI_OVERLOADED\fP =  2, \fBAFCGI_UNKNOWN_ROLE\fP =  3 }"
 .br
 .in -1c
 .SS "Functions"
@@ -78,6 +74,9 @@ afcgi.h \-
 .br
 .ti -1c
 .RI "void \fBafcgi_stop_write\fP (struct afcgi_sess *s)"
+.br
+.ti -1c
+.RI "static int \fBafcgi_write\fP (struct afcgi_sess *s, char *buff, int len)"
 .br
 .ti -1c
 .RI "void \fBafcgi_end\fP (struct afcgi_sess *s, enum \fBafcgi_return_status\fP rs, int rc)"
@@ -116,7 +115,7 @@ used for standard afcgi callbacks
 .RE
 .PP
 
-.SS "typedef void(*) \fBafcgi_cb_data\fP(struct afcgi_sess *s, void *arg, char *data, int len)"
+.SS "typedef void(*) \fBafcgi_cb_data\fP(struct afcgi_sess *s, void *arg, int len)"
 .PP
 used for standard afcgi input callbacks 
 .PP
@@ -126,30 +125,7 @@ used for standard afcgi input callbacks
 .br
 \fIarg\fP is easy argument 
 .br
-\fIdata\fP is buffer containing data 
-.br
 \fIlen\fP is data length 
-.RE
-.PP
-
-.SS "typedef int(*) \fBafcgi_cb_write\fP(struct afcgi_sess *s, void *arg, char *data, int len)"
-.PP
-used for standard afcgi output callbacks 
-.PP
-\fBParameters:\fP
-.RS 4
-\fIs\fP is afcgi session 
-.br
-\fIarg\fP is easy argument 
-.br
-\fIdata\fP is buffer receiving data 
-.br
-\fIlen\fP is max data length writable 
-.RE
-.PP
-\fBReturns:\fP
-.RS 4
-return length writed 
 .RE
 .PP
 
@@ -189,16 +165,16 @@ return status
 \fBEnumerator: \fP
 .in +1c
 .TP
-\fB\fIFCGI_REQUEST_COMPLETE \fP\fP
+\fB\fIAFCGI_REQUEST_COMPLETE \fP\fP
 normal end of request. 
 .TP
-\fB\fIFCGI_CANT_MPX_CONN \fP\fP
+\fB\fIAFCGI_CANT_MPX_CONN \fP\fP
 rejecting a new request. This happens when a Web server sends concurrent requests over one connection to an application that is designed to process one request at a time per connection. 
 .TP
-\fB\fIFCGI_OVERLOADED \fP\fP
+\fB\fIAFCGI_OVERLOADED \fP\fP
 rejecting a new request. This happens when the application runs out of some resource, e.g. database connections. 
 .TP
-\fB\fIFCGI_UNKNOWN_ROLE \fP\fP
+\fB\fIAFCGI_UNKNOWN_ROLE \fP\fP
 rejecting a new request. This happens when the Web server has specified a role that is unknown to the application. 
 .SH "Function Documentation"
 .PP 
@@ -282,6 +258,25 @@ afcgi session want's write
 \fBParameters:\fP
 .RS 4
 \fIs\fP afcgi session identifier 
+.RE
+.PP
+
+.SS "static int afcgi_write (struct afcgi_sess * s, char * buff, int len)\fC [inline, static]\fP"
+.PP
+write data 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIs\fP afcgi session identifier 
+.br
+\fIbuff\fP buffer 
+.br
+\fIlen\fP buffer len 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+size writed 
 .RE
 .PP
 

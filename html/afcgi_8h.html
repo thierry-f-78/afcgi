@@ -16,6 +16,7 @@
     <li><a href="globals.html"><span>Globals</span></a></li>
   </ul></div>
 <h1>afcgi.h File Reference</h1><code>#include &lt;events.h&gt;</code><br>
+<code>#include &lt;rotbuffer.h&gt;</code><br>
 
 <p>
 Include dependency graph for afcgi.h:<p><center><img src="afcgi_8h__incl.png" border="0" usemap="#afcgi.h_map" alt=""></center>
@@ -30,8 +31,6 @@ Include dependency graph for afcgi.h:<p><center><img src="afcgi_8h__incl.png" bo
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>afcgi</b></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>afcgi::rotbuffer</b></td></tr>
-
 <tr><td class="memItemLeft" nowrap align="right" valign="top">struct &nbsp;</td><td class="memItemRight" valign="bottom"><b>afcgi_binder</b></td></tr>
 
 <tr><td colspan="2"><br><h2>Defines</h2></td></tr>
@@ -40,9 +39,7 @@ Include dependency graph for afcgi.h:<p><center><img src="afcgi_8h__incl.png" bo
 <tr><td colspan="2"><br><h2>Typedefs</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">typedef void(*)&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#f000732bbd43e116fc79b3df21b4cc24">afcgi_cb</a> (struct afcgi_sess *s, void *arg)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef void(*)&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#e29ecb4ccaaec9b0dbcbad41e375343f">afcgi_cb_data</a> (struct afcgi_sess *s, void *arg, char *data, int len)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef int(*)&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#157818286000804f4cbccc54de1f5926">afcgi_cb_write</a> (struct afcgi_sess *s, void *arg, char *data, int len)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">typedef void(*)&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#93f6572599ed698843bb784af2d5f5d7">afcgi_cb_data</a> (struct afcgi_sess *s, void *arg, int len)</td></tr>
 
 <tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#e9382f0ce76b67a2a9dd4c19353cb561">afcgi_callback_names</a> { <br>
@@ -57,10 +54,10 @@ Include dependency graph for afcgi.h:<p><center><img src="afcgi_8h__incl.png" bo
 <br>
  }</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03">afcgi_return_status</a> { <a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03d1d20d62b0f1ee1a38a0d9549ee3665f">FCGI_REQUEST_COMPLETE</a> =  0, 
-<a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e0305ff5f4e30e534c99638df50d2ec181d">FCGI_CANT_MPX_CONN</a> =  1, 
-<a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e031cf640defd464bba4522428797e290d4">FCGI_OVERLOADED</a> =  2, 
-<a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e031a4ce5a4799f174ebc80be61d12d6865">FCGI_UNKNOWN_ROLE</a> =  3
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03">afcgi_return_status</a> { <a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03d92094365bc939d58eb7e70d876ad5c1">AFCGI_REQUEST_COMPLETE</a> =  0, 
+<a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03474cc75bf90a78f727d01cc08aaad67c">AFCGI_CANT_MPX_CONN</a> =  1, 
+<a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e038d31b2b546b5532473f48e1fe5e33041">AFCGI_OVERLOADED</a> =  2, 
+<a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03733efa32d95547a2cde8cec91d7f4117">AFCGI_UNKNOWN_ROLE</a> =  3
  }</td></tr>
 
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
@@ -75,6 +72,8 @@ Include dependency graph for afcgi.h:<p><center><img src="afcgi_8h__incl.png" bo
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#f8a3aa29d940f0c84418792b51347d40">afcgi_want_write</a> (struct afcgi_sess *s)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#8757dbf0dc4d2be26413023049483bb7">afcgi_stop_write</a> (struct afcgi_sess *s)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#bbb6c6daea7005fce3c408cc8b6aac9a">afcgi_write</a> (struct afcgi_sess *s, char *buff, int len)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#ca488a5e2137232ac85c412720f1f92f">afcgi_end</a> (struct afcgi_sess *s, enum <a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03">afcgi_return_status</a> rs, int rc)</td></tr>
 
@@ -136,12 +135,12 @@ used for standard afcgi callbacks <dl compact><dt><b>Parameters:</b></dt><dd>
 
 </div>
 </div><p>
-<a class="anchor" name="e29ecb4ccaaec9b0dbcbad41e375343f"></a><!-- doxytag: member="afcgi.h::afcgi_cb_data" ref="e29ecb4ccaaec9b0dbcbad41e375343f" args="(struct afcgi_sess *s, void *arg, char *data, int len)" -->
+<a class="anchor" name="93f6572599ed698843bb784af2d5f5d7"></a><!-- doxytag: member="afcgi.h::afcgi_cb_data" ref="93f6572599ed698843bb784af2d5f5d7" args="(struct afcgi_sess *s, void *arg, int len)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void(*) <a class="el" href="afcgi_8h.html#e29ecb4ccaaec9b0dbcbad41e375343f">afcgi_cb_data</a>(struct afcgi_sess *s, void *arg, char *data, int len)          </td>
+          <td class="memname">typedef void(*) <a class="el" href="afcgi_8h.html#93f6572599ed698843bb784af2d5f5d7">afcgi_cb_data</a>(struct afcgi_sess *s, void *arg, int len)          </td>
         </tr>
       </table>
 </div>
@@ -152,34 +151,9 @@ used for standard afcgi input callbacks <dl compact><dt><b>Parameters:</b></dt><
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>s</em>&nbsp;</td><td>is afcgi session </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>arg</em>&nbsp;</td><td>is easy argument </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>data</em>&nbsp;</td><td>is buffer containing data </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>len</em>&nbsp;</td><td>is data length </td></tr>
   </table>
 </dl>
-
-</div>
-</div><p>
-<a class="anchor" name="157818286000804f4cbccc54de1f5926"></a><!-- doxytag: member="afcgi.h::afcgi_cb_write" ref="157818286000804f4cbccc54de1f5926" args="(struct afcgi_sess *s, void *arg, char *data, int len)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef int(*) <a class="el" href="afcgi_8h.html#157818286000804f4cbccc54de1f5926">afcgi_cb_write</a>(struct afcgi_sess *s, void *arg, char *data, int len)          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-used for standard afcgi output callbacks <dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>s</em>&nbsp;</td><td>is afcgi session </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>arg</em>&nbsp;</td><td>is easy argument </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>data</em>&nbsp;</td><td>is buffer receiving data </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>len</em>&nbsp;</td><td>is max data length writable </td></tr>
-  </table>
-</dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>return length writed </dd></dl>
 
 </div>
 </div><p>
@@ -231,13 +205,13 @@ Called when server sent abort </td></tr>
 <p>
 return status <dl compact><dt><b>Enumerator: </b></dt><dd>
 <table border="0" cellspacing="2" cellpadding="0">
-<tr><td valign="top"><em><a class="anchor" name="25faf6dd1593c6a9c4577f9166578e03d1d20d62b0f1ee1a38a0d9549ee3665f"></a><!-- doxytag: member="FCGI_REQUEST_COMPLETE" ref="25faf6dd1593c6a9c4577f9166578e03d1d20d62b0f1ee1a38a0d9549ee3665f" args="" -->FCGI_REQUEST_COMPLETE</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" name="25faf6dd1593c6a9c4577f9166578e03d92094365bc939d58eb7e70d876ad5c1"></a><!-- doxytag: member="AFCGI_REQUEST_COMPLETE" ref="25faf6dd1593c6a9c4577f9166578e03d92094365bc939d58eb7e70d876ad5c1" args="" -->AFCGI_REQUEST_COMPLETE</em>&nbsp;</td><td>
 normal end of request. </td></tr>
-<tr><td valign="top"><em><a class="anchor" name="25faf6dd1593c6a9c4577f9166578e0305ff5f4e30e534c99638df50d2ec181d"></a><!-- doxytag: member="FCGI_CANT_MPX_CONN" ref="25faf6dd1593c6a9c4577f9166578e0305ff5f4e30e534c99638df50d2ec181d" args="" -->FCGI_CANT_MPX_CONN</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" name="25faf6dd1593c6a9c4577f9166578e03474cc75bf90a78f727d01cc08aaad67c"></a><!-- doxytag: member="AFCGI_CANT_MPX_CONN" ref="25faf6dd1593c6a9c4577f9166578e03474cc75bf90a78f727d01cc08aaad67c" args="" -->AFCGI_CANT_MPX_CONN</em>&nbsp;</td><td>
 rejecting a new request. This happens when a Web server sends concurrent requests over one connection to an application that is designed to process one request at a time per connection. </td></tr>
-<tr><td valign="top"><em><a class="anchor" name="25faf6dd1593c6a9c4577f9166578e031cf640defd464bba4522428797e290d4"></a><!-- doxytag: member="FCGI_OVERLOADED" ref="25faf6dd1593c6a9c4577f9166578e031cf640defd464bba4522428797e290d4" args="" -->FCGI_OVERLOADED</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" name="25faf6dd1593c6a9c4577f9166578e038d31b2b546b5532473f48e1fe5e33041"></a><!-- doxytag: member="AFCGI_OVERLOADED" ref="25faf6dd1593c6a9c4577f9166578e038d31b2b546b5532473f48e1fe5e33041" args="" -->AFCGI_OVERLOADED</em>&nbsp;</td><td>
 rejecting a new request. This happens when the application runs out of some resource, e.g. database connections. </td></tr>
-<tr><td valign="top"><em><a class="anchor" name="25faf6dd1593c6a9c4577f9166578e031a4ce5a4799f174ebc80be61d12d6865"></a><!-- doxytag: member="FCGI_UNKNOWN_ROLE" ref="25faf6dd1593c6a9c4577f9166578e031a4ce5a4799f174ebc80be61d12d6865" args="" -->FCGI_UNKNOWN_ROLE</em>&nbsp;</td><td>
+<tr><td valign="top"><em><a class="anchor" name="25faf6dd1593c6a9c4577f9166578e03733efa32d95547a2cde8cec91d7f4117"></a><!-- doxytag: member="AFCGI_UNKNOWN_ROLE" ref="25faf6dd1593c6a9c4577f9166578e03733efa32d95547a2cde8cec91d7f4117" args="" -->AFCGI_UNKNOWN_ROLE</em>&nbsp;</td><td>
 rejecting a new request. This happens when the Web server has specified a role that is unknown to the application. </td></tr>
 </table>
 </dl>
@@ -464,7 +438,50 @@ afcgi session want's write <dl compact><dt><b>Parameters:</b></dt><dd>
 
 </div>
 </div><p>
-<hr size="1"><address style="align: right;"><small>Generated on Sun Nov 23 15:16:25 2008 for events by&nbsp;
+<a class="anchor" name="bbb6c6daea7005fce3c408cc8b6aac9a"></a><!-- doxytag: member="afcgi.h::afcgi_write" ref="bbb6c6daea7005fce3c408cc8b6aac9a" args="(struct afcgi_sess *s, char *buff, int len)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int afcgi_write           </td>
+          <td>(</td>
+          <td class="paramtype">struct afcgi_sess *&nbsp;</td>
+          <td class="paramname"> <em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&nbsp;</td>
+          <td class="paramname"> <em>buff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>len</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"><code> [inline, static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+write data <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>s</em>&nbsp;</td><td>afcgi session identifier </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>buff</em>&nbsp;</td><td>buffer </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>len</em>&nbsp;</td><td>buffer len </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>size writed </dd></dl>
+
+</div>
+</div><p>
+<hr size="1"><address style="align: right;"><small>Generated on Sun Nov 23 17:00:50 2008 for events by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.1 </small></address>
 </body>
