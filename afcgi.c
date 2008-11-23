@@ -491,11 +491,11 @@ static void new_conn(int l, void *arg) {
 	a->head = (char *)&a->c;
 	a->binder = binder;
 	a->write = NULL;
+	a->buff_wr.buff = a->buffer_write;
 	a->buff_wr.buff_end = a->buff_wr.buff;
 	a->buff_wr.buff_start = a->buff_wr.buff;
 	a->buff_wr.buff_len = 0;
 	a->buff_wr.buff_size = AFCGI_BUFFER_SIZE;
-	a->buff_wr.buff = a->buffer_write;
 	a->end = NULL;
 	ev_poll_fd_set(fd, EV_POLL_READ, new_read, a);
 }
@@ -524,10 +524,6 @@ void afcgi_stop_write(struct afcgi_sess *s) {
 		s->write_next->write_prev = s->write_prev;
 		s->write_prev->write_next = s->write_next;
 	}  
-}
-
-int afcgi_write(struct afcgi_sess *s, char *buff, int len) {
-	;
 }
 
 void afcgi_end(struct afcgi_sess *s, enum afcgi_return_status rs, int rc) {

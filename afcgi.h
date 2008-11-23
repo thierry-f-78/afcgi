@@ -41,23 +41,26 @@ enum afcgi_callback_names {
 /** return status */
 enum afcgi_return_status {
 	/** normal end of request. */
-	FCGI_REQUEST_COMPLETE = 0,
+	AFCGI_REQUEST_COMPLETE = 0,
+
 	/** 
 	 * rejecting a new request. This happens when a Web server sends concurrent
 	 * requests over one connection to an application that is designed to
 	 * process one request at a time per connection.
 	 */
-	FCGI_CANT_MPX_CONN    = 1,
+	AFCGI_CANT_MPX_CONN    = 1,
+
 	/**
 	 * rejecting a new request. This happens when the application runs out of
 	 * some resource, e.g. database connections.
 	 */
-	FCGI_OVERLOADED       = 2,
+	AFCGI_OVERLOADED       = 2,
+
 	/**
 	 * rejecting a new request. This happens when the Web server has
 	 * specified a role that is unknown to the application.
 	 */
-	FCGI_UNKNOWN_ROLE     = 3
+	AFCGI_UNKNOWN_ROLE     = 3
 };
 
 struct ev_timeout_basic_node tm;
@@ -232,6 +235,17 @@ void afcgi_want_write(struct afcgi_sess *s);
  * @param s afcgi session identifier
  */
 void afcgi_stop_write(struct afcgi_sess *s);
+
+/**
+ * write data
+ * @param s afcgi session identifier
+ * @param buff buffer
+ * @param len buffer len
+ * @return size writed
+ */
+static inline int afcgi_write(struct afcgi_sess *s, char *buff, int len) {
+	return rotbuffer_read_buff(&s->afcgi->buff_wr, buff, len);
+}
 
 /**
  * afcgi session end
