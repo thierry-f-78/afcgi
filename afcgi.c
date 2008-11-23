@@ -337,7 +337,7 @@ static void new_read(int fd, void *arg) {
 
 		// callback data ready
 		if (s->on_receive != NULL)
-			s->on_receive(s, s->arg, a->buffer, a->buff_len);
+			s->on_receive(s, s->arg, a->buff_len);
 		goto case_WAIT_HEADER;
 
 	/********************************************
@@ -372,8 +372,8 @@ static void new_read(int fd, void *arg) {
 			return;
 
 		// callback data
-		if (s->on_data != NULL)
-			s->on_data_recv(s, s->arg, a->buffer, a->buff_len);
+		if (s->on_data_recv != NULL)
+			s->on_data_recv(s, s->arg, a->buff_len);
 		goto case_WAIT_HEADER;
 
 	}
@@ -381,9 +381,9 @@ static void new_read(int fd, void *arg) {
 
 static void new_write(int fd, void *arg) {
 	struct afcgi *a = arg;
-	int len;
-	char *s;
 	struct afcgi_sess *sess;
+	char *p, *p2;
+	int data;
 	
 	// try writing
 	rotbuffer_write_fd(&a->buff_wr, a->fd);
@@ -431,40 +431,50 @@ static void new_write(int fd, void *arg) {
 	}
 
 	// callback
-	if (a->write != NULL) {
+	while (a->write != NULL) {
+
+		// get session
 		sess = a->write;
+
+		// move rotbuffer
+		// if no space avalaible, return
+		if (rotbuffer_free_size(&a->buff_wr) < AFCGI_HEADER_LEN)
+			break;
+		p = rotbuffer_store(&a->buff_wr);
+		rotbuffer_seek_wc(&a->buff_wr, AFCGI_HEADER_LEN);
+		p2 = rotbuffer_store(&a->buff_wr);
 
 		// rotate write turn
 		a->write = a->write->write_next;
 
 		// callback
-		sess->on_write(sess, sess->arg, s, s - a->write_buffer);
+		sess->on_write(sess, sess->arg, rotbuffer_free_size(&a->buff_wr));
+
+		// if no data writed
+		if (rotbuffer_store(&a->buff_wr) == p2) {
+			rotbuffer_seek_wc(&a->buff_wr, - AFCGI_HEADER_LEN);
+			continue;
+		}
 
 		// build header
-		/*
-		if (len > 0) {
-			s -= AFCGI_HEADER_LEN;
-
-			// unsigned char version;
-			s[0] = AFCGI_VERSION;
-			// unsigned char type;
-			s[1] = AFCGI_STDOUT;
-			// unsigned char requestIdB1;
-			// unsigned char requestIdB0;
-			s[2] = a->write->request_id >> 8;
-			s[3] = a->write->request_id & 0x00ff;
-			// unsigned char contentLengthB1;
-			// unsigned char contentLengthB0;
-			s[4] = len >> 8;
-			s[5] = len & 0x00ff;
-			// unsigned char paddingLength;
-			s[6] = 0;
-			// unsigned char reserved;
-			s[7] = 0;
-
-			a->write_len += len + AFCGI_HEADER_LEN;
-		}
-		*/
+		// unsigned char version;
+		p = rotbuffer_add_byte_at_pos(&a->buff_wr, p, AFCGI_VERSION);
+		// unsigned char type;
+		p = rotbuffer_add_byte_at_pos(&a->buff_wr, p, AFCGI_STDOUT);
+		// unsigned char requestIdB1;
+		// unsigned char requestIdB0;
+		data = a->write->request_id;
+		p = rotbuffer_add_byte_at_pos(&a->buff_wr, p, data >> 8);
+		p = rotbuffer_add_byte_at_pos(&a->buff_wr, p, data & 0xff);
+		// unsigned char contentLengthB1;
+		// unsigned char contentLengthB0;
+		data = rotbuffer_pos_diff(&a->buff_wr, p2, rotbuffer_store(&a->buff_wr));
+		p = rotbuffer_add_byte_at_pos(&a->buff_wr, p, data >> 8);
+		p = rotbuffer_add_byte_at_pos(&a->buff_wr, p, data & 0xff);
+		// unsigned char paddingLength;
+		p = rotbuffer_add_byte_at_pos(&a->buff_wr, p, 0);
+		// unsigned char reserved;
+		p = rotbuffer_add_byte_at_pos(&a->buff_wr, p, 0);
 	}
 }
 
@@ -481,8 +491,10 @@ static void new_conn(int l, void *arg) {
 	a->head = (char *)&a->c;
 	a->binder = binder;
 	a->write = NULL;
-	a->write_start = a->buffer;
-	a->write_len = 0;
+	a->buff_wr.buff_end = a->buff_wr.buff;
+	a->buff_wr.buff_start = a->buff_wr.buff;
+	a->buff_wr.buff_len = 0;
+	a->buff_wr.buff_size = AFCGI_BUFFER_SIZE;
 	a->end = NULL;
 	ev_poll_fd_set(fd, EV_POLL_READ, new_read, a);
 }
@@ -511,6 +523,10 @@ void afcgi_stop_write(struct afcgi_sess *s) {
 		s->write_next->write_prev = s->write_prev;
 		s->write_prev->write_next = s->write_next;
 	}  
+}
+
+int afcgi_write(struct afcgi_sess *s, char *buff, int len) {
+	s
 }
 
 void afcgi_end(struct afcgi_sess *s, enum afcgi_return_status rs, int rc) {

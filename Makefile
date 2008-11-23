@@ -1,8 +1,8 @@
 CPPFLAGS = 
-CFLAGS = -I../events/ -O0 -g -Wall
-LDFLAGS = -L../events/ -levents
+CFLAGS = -I../events/ -I../rotbuffer/ -O0 -g -Wall
+LDFLAGS = -L../events/ -levents -L../rotbuffer/ -lrotbuffer
 
-OBJS = btree32.o afcgi.o rotbuffer.o
+OBJS = afcgi.o
 
 test: test.o $(OBJS)
 	$(CC) -o test test.o $(OBJS) $(LDFLAGS)
