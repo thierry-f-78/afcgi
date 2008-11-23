@@ -30,7 +30,8 @@ enum afcgi_status {
 	WAIT_HEADER,
 	WAIT_REQUEST_HDR,
 	WAIT_PARAMS,
-	WAIT_AFCGI_STDIN
+	WAIT_AFCGI_STDIN,
+	WAIT_AFCGI_DATA
 }; 
 
 static void free_afcgi_sess(struct afcgi_sess *s) {
@@ -137,14 +138,18 @@ static void new_read(int fd, void *arg) {
 		case AFCGI_BEGIN_REQUEST:       goto case_WAIT_REQUEST_HDR;
 		case AFCGI_PARAMS:              goto case_WAIT_PARAMS;
 		case AFCGI_STDIN:               goto case_WAIT_AFCGI_STDIN;
-		case AFCGI_UNKNOWN_TYPE:
+		case AFCGI_DATA:                goto case_WAIT_AFCGI_DATA;
 		case AFCGI_ABORT_REQUEST:
+		/* value not found in server packets in normal cases */
 		case AFCGI_END_REQUEST:
 		case AFCGI_STDOUT:
 		case AFCGI_STDERR:
-		case AFCGI_DATA:
+		/* TODO */
 		case AFCGI_GET_VALUES:
 		case AFCGI_GET_VALUES_RESULT:
+		/* error */
+		case AFCGI_UNKNOWN_TYPE:
+		default:
 			conn_bye(a);
 			return;
 		}
@@ -334,8 +339,44 @@ static void new_read(int fd, void *arg) {
 		if (s->on_receive != NULL)
 			s->on_receive(s, s->arg, a->buffer, a->buff_len);
 		goto case_WAIT_HEADER;
-	}
 
+	/********************************************
+	* wait for data
+	********************************************/
+	case_WAIT_AFCGI_DATA:
+
+		// bloc vide: fin des data
+		if (a->c.content_len == 0) {
+			// call back
+			if (s->on_end_of_data != NULL)
+				s->on_run(s, s->arg);
+			goto case_WAIT_HEADER;
+		}
+
+		a->s = WAIT_PARAMS;
+		a->buff = a->buffer;
+		a->buff_len = 0;
+
+	case WAIT_AFCGI_DATA:
+		sz = a->c.content_len - a->buff_len;
+		sz = read(a->fd, a->buff, sz);
+		if (sz <= 0) {
+			conn_bye(a);
+			return;
+		}
+
+		if (sz > 0)
+			a->buff_len += sz;
+
+		if (a->buff_len < a->c.content_len)
+			return;
+
+		// callback data
+		if (s->on_data != NULL)
+			s->on_data_recv(s, s->arg, a->buffer, a->buff_len);
+		goto case_WAIT_HEADER;
+
+	}
 }
 
 static void new_write(int fd, void *arg) {

@@ -23,7 +23,9 @@
 enum afcgi_callback_names {
 	ON_HEADERS = 0,
 	ON_RECEIVE,
+	ON_DATA_RECV,
 	ON_RUN,
+	ON_END_OF_DATA,
 	ON_WRITE,
 	ON_ABORT
 };
@@ -107,6 +109,8 @@ struct afcgi_sess {
 	void *arg;
 	afcgi_cb on_headers;
 	afcgi_cb_data on_receive;
+	afcgi_cb_data data_recv;
+	afcgi_cb on_end_of_data;
 	afcgi_cb on_run;
 	afcgi_cb on_abort;
 	afcgi_cb_write on_write;
@@ -209,12 +213,20 @@ afcgi_set_cb_ON_RECEIVE(struct afcgi_sess *s, afcgi_cb_data cb) {
 	s->on_receive = cb;
 }
 static inline void 
+afcgi_set_cb_ON_DATA_RECV(struct afcgi_sess *s, afcgi_cb_data cb) {
+	s->on_receive = cb;
+}
+static inline void 
 afcgi_set_cb_ON_WRITE(struct afcgi_sess *s, afcgi_cb_write cb) {
 	s->on_write = cb;
 }
 static inline void 
 afcgi_set_cb_ON_RUN(struct afcgi_sess *s, afcgi_cb cb) {
 	s->on_run = cb;
+}
+static inline void 
+afcgi_set_cb_ON_END_OF_DATA(struct afcgi_sess *s, afcgi_cb cb) {
+	s->on_end_of_data = cb;
 }
 static inline void 
 afcgi_set_cb_ON_ABORT(struct afcgi_sess *s, afcgi_cb cb) {
