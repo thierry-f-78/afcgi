@@ -14,6 +14,7 @@
 #define __AFCGI_H__
 
 #include <events.h>
+#include <rotbuffer.h>
 
 #define AFCGI_VERSION 1
 #define AFCGI_HEADER_LEN  8
@@ -129,26 +130,18 @@ struct afcgi {
 		uint8_t  reserved;
 	} c;
 	char *head;
-	char buffer[1<<16];
-	char *buff;
-	int buff_len;
 	struct afcgi_binder *binder;
 	struct afcgi_sess *sess[AFCGI_BUFFER_SIZE];
 
+	// read
+	char buffer[AFCGI_BUFFER_SIZE];
+	char *buff;
+	int buff_len;
+
 	// write
 	struct afcgi_sess *write;
-	struct rotbuffer {
-		char *buff_end;
-		char *buff_start;
-		int buff_len;
-		int buff_size;
-		char buff[AFCGI_BUFFER_SIZE];
-	} buff_wr;
-	/*
-	char write_buffer[AFCGI_BUFFER_SIZE];
-	int write_len;
-	char *write_start;
-	*/
+	struct rotbuffer buff_wr;
+	char buffer_write[AFCGI_BUFFER_SIZE];
 
 	// end
 	struct afcgi_sess *end;
