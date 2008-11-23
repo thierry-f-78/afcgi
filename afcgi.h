@@ -21,12 +21,19 @@
 
 /** The names of the different callbacks */
 enum afcgi_callback_names {
+	/** Called when all headers was received */
 	ON_HEADERS = 0,
+	/** Called when STDIN stream packet was ready */
 	ON_RECEIVE,
+	/** Called when DATA stream packet was ready */
 	ON_DATA_RECV,
+	/** Called when all STDIN packets was sent */
 	ON_RUN,
+	/** Called when all DATA packets was sent */
 	ON_END_OF_DATA,
+	/** Called when application can write on STDIN, STDERR */
 	ON_WRITE,
+	/** Called when server sent abort */
 	ON_ABORT
 };
 

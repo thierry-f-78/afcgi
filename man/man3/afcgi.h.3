@@ -52,7 +52,7 @@ afcgi.h \-
 
 .in +1c
 .ti -1c
-.RI "enum \fBafcgi_callback_names\fP "
+.RI "enum \fBafcgi_callback_names\fP { \fBON_HEADERS\fP =  0, \fBON_RECEIVE\fP, \fBON_DATA_RECV\fP, \fBON_RUN\fP, \fBON_END_OF_DATA\fP, \fBON_WRITE\fP, \fBON_ABORT\fP }"
 .br
 .ti -1c
 .RI "enum \fBafcgi_return_status\fP { \fBFCGI_REQUEST_COMPLETE\fP =  0, \fBFCGI_CANT_MPX_CONN\fP =  1, \fBFCGI_OVERLOADED\fP =  2, \fBFCGI_UNKNOWN_ROLE\fP =  3 }"
@@ -80,14 +80,7 @@ afcgi.h \-
 .RI "void \fBafcgi_stop_write\fP (struct afcgi_sess *s)"
 .br
 .ti -1c
-.RI "void \fBafcgi_end\fP (struct afcgi_sess *s, enum \fBafcgi_return_status\fP rs)"
-.br
-.in -1c
-.SS "Variables"
-
-.in +1c
-.ti -1c
-.RI "enum \fBafcgi_return_status\fP \fBtm\fP"
+.RI "void \fBafcgi_end\fP (struct afcgi_sess *s, enum \fBafcgi_return_status\fP rs, int rc)"
 .br
 .in -1c
 .SH "Detailed Description"
@@ -165,6 +158,30 @@ return length writed
 .SS "enum \fBafcgi_callback_names\fP"
 .PP
 The names of the different callbacks 
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fION_HEADERS \fP\fP
+Called when all headers was received 
+.TP
+\fB\fION_RECEIVE \fP\fP
+Called when STDIN stream packet was ready 
+.TP
+\fB\fION_DATA_RECV \fP\fP
+Called when DATA stream packet was ready 
+.TP
+\fB\fION_RUN \fP\fP
+Called when all STDIN packets was sent 
+.TP
+\fB\fION_END_OF_DATA \fP\fP
+Called when all DATA packets was sent 
+.TP
+\fB\fION_WRITE \fP\fP
+Called when application can write on STDIN, STDERR 
+.TP
+\fB\fION_ABORT \fP\fP
+Called when server sent abort 
 .SS "enum \fBafcgi_return_status\fP"
 .PP
 return status 
@@ -204,7 +221,7 @@ if ok return 0, else return < 0
 .RE
 .PP
 
-.SS "void afcgi_end (struct afcgi_sess * s, enum \fBafcgi_return_status\fP rs)"
+.SS "void afcgi_end (struct afcgi_sess * s, enum \fBafcgi_return_status\fP rs, int rc)"
 .PP
 afcgi session end 
 .PP
@@ -268,11 +285,6 @@ afcgi session want's write
 .RE
 .PP
 
-.SH "Variable Documentation"
-.PP 
-.SS "enum \fBafcgi_return_status\fP \fBtm\fP"
-.PP
-return status 
 .SH "Author"
 .PP 
 Generated automatically by Doxygen for events from the source code.

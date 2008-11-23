@@ -45,7 +45,17 @@ Include dependency graph for afcgi.h:<p><center><img src="afcgi_8h__incl.png" bo
 <tr><td class="memItemLeft" nowrap align="right" valign="top">typedef int(*)&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#157818286000804f4cbccc54de1f5926">afcgi_cb_write</a> (struct afcgi_sess *s, void *arg, char *data, int len)</td></tr>
 
 <tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#e9382f0ce76b67a2a9dd4c19353cb561">afcgi_callback_names</a> </td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#e9382f0ce76b67a2a9dd4c19353cb561">afcgi_callback_names</a> { <br>
+&nbsp;&nbsp;<a class="el" href="afcgi_8h.html#e9382f0ce76b67a2a9dd4c19353cb561d8bef4ca5eea023f5c819e10b2715178">ON_HEADERS</a> =  0, 
+<a class="el" href="afcgi_8h.html#e9382f0ce76b67a2a9dd4c19353cb5611b1942d8facd827925bed32447074a55">ON_RECEIVE</a>, 
+<a class="el" href="afcgi_8h.html#e9382f0ce76b67a2a9dd4c19353cb5616ed9326d024ac5e28c72ead8937541ed">ON_DATA_RECV</a>, 
+<a class="el" href="afcgi_8h.html#e9382f0ce76b67a2a9dd4c19353cb561f2e478cdae2a1052a6a947cb9a395fef">ON_RUN</a>, 
+<br>
+&nbsp;&nbsp;<a class="el" href="afcgi_8h.html#e9382f0ce76b67a2a9dd4c19353cb561f4aa060d45dfba04fbb799c1e1bad42a">ON_END_OF_DATA</a>, 
+<a class="el" href="afcgi_8h.html#e9382f0ce76b67a2a9dd4c19353cb5611005c3bab3b504c0d1bd50ea66eb2492">ON_WRITE</a>, 
+<a class="el" href="afcgi_8h.html#e9382f0ce76b67a2a9dd4c19353cb5612e24b5c4b5e4754d6c1c7e541f652f59">ON_ABORT</a>
+<br>
+ }</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03">afcgi_return_status</a> { <a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03d1d20d62b0f1ee1a38a0d9549ee3665f">FCGI_REQUEST_COMPLETE</a> =  0, 
 <a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e0305ff5f4e30e534c99638df50d2ec181d">FCGI_CANT_MPX_CONN</a> =  1, 
@@ -66,10 +76,7 @@ Include dependency graph for afcgi.h:<p><center><img src="afcgi_8h__incl.png" bo
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#8757dbf0dc4d2be26413023049483bb7">afcgi_stop_write</a> (struct afcgi_sess *s)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#914d3234edde5e90631c67e01a9b2bb4">afcgi_end</a> (struct afcgi_sess *s, enum <a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03">afcgi_return_status</a> rs)</td></tr>
-
-<tr><td colspan="2"><br><h2>Variables</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">enum <a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03">afcgi_return_status</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#821a2c31f5d789ffdff52fc192838da2">tm</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#ca488a5e2137232ac85c412720f1f92f">afcgi_end</a> (struct afcgi_sess *s, enum <a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03">afcgi_return_status</a> rs, int rc)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -189,7 +196,25 @@ used for standard afcgi output callbacks <dl compact><dt><b>Parameters:</b></dt>
 <div class="memdoc">
 
 <p>
-The names of the different callbacks 
+The names of the different callbacks <dl compact><dt><b>Enumerator: </b></dt><dd>
+<table border="0" cellspacing="2" cellpadding="0">
+<tr><td valign="top"><em><a class="anchor" name="e9382f0ce76b67a2a9dd4c19353cb561d8bef4ca5eea023f5c819e10b2715178"></a><!-- doxytag: member="ON_HEADERS" ref="e9382f0ce76b67a2a9dd4c19353cb561d8bef4ca5eea023f5c819e10b2715178" args="" -->ON_HEADERS</em>&nbsp;</td><td>
+Called when all headers was received </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="e9382f0ce76b67a2a9dd4c19353cb5611b1942d8facd827925bed32447074a55"></a><!-- doxytag: member="ON_RECEIVE" ref="e9382f0ce76b67a2a9dd4c19353cb5611b1942d8facd827925bed32447074a55" args="" -->ON_RECEIVE</em>&nbsp;</td><td>
+Called when STDIN stream packet was ready </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="e9382f0ce76b67a2a9dd4c19353cb5616ed9326d024ac5e28c72ead8937541ed"></a><!-- doxytag: member="ON_DATA_RECV" ref="e9382f0ce76b67a2a9dd4c19353cb5616ed9326d024ac5e28c72ead8937541ed" args="" -->ON_DATA_RECV</em>&nbsp;</td><td>
+Called when DATA stream packet was ready </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="e9382f0ce76b67a2a9dd4c19353cb561f2e478cdae2a1052a6a947cb9a395fef"></a><!-- doxytag: member="ON_RUN" ref="e9382f0ce76b67a2a9dd4c19353cb561f2e478cdae2a1052a6a947cb9a395fef" args="" -->ON_RUN</em>&nbsp;</td><td>
+Called when all STDIN packets was sent </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="e9382f0ce76b67a2a9dd4c19353cb561f4aa060d45dfba04fbb799c1e1bad42a"></a><!-- doxytag: member="ON_END_OF_DATA" ref="e9382f0ce76b67a2a9dd4c19353cb561f4aa060d45dfba04fbb799c1e1bad42a" args="" -->ON_END_OF_DATA</em>&nbsp;</td><td>
+Called when all DATA packets was sent </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="e9382f0ce76b67a2a9dd4c19353cb5611005c3bab3b504c0d1bd50ea66eb2492"></a><!-- doxytag: member="ON_WRITE" ref="e9382f0ce76b67a2a9dd4c19353cb5611005c3bab3b504c0d1bd50ea66eb2492" args="" -->ON_WRITE</em>&nbsp;</td><td>
+Called when application can write on STDIN, STDERR </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="e9382f0ce76b67a2a9dd4c19353cb5612e24b5c4b5e4754d6c1c7e541f652f59"></a><!-- doxytag: member="ON_ABORT" ref="e9382f0ce76b67a2a9dd4c19353cb5612e24b5c4b5e4754d6c1c7e541f652f59" args="" -->ON_ABORT</em>&nbsp;</td><td>
+Called when server sent abort </td></tr>
+</table>
+</dl>
+
 </div>
 </div><p>
 <a class="anchor" name="25faf6dd1593c6a9c4577f9166578e03"></a><!-- doxytag: member="afcgi.h::afcgi_return_status" ref="25faf6dd1593c6a9c4577f9166578e03" args="" -->
@@ -263,7 +288,7 @@ Bind network address or socket <dl compact><dt><b>Parameters:</b></dt><dd>
 
 </div>
 </div><p>
-<a class="anchor" name="914d3234edde5e90631c67e01a9b2bb4"></a><!-- doxytag: member="afcgi.h::afcgi_end" ref="914d3234edde5e90631c67e01a9b2bb4" args="(struct afcgi_sess *s, enum afcgi_return_status rs)" -->
+<a class="anchor" name="ca488a5e2137232ac85c412720f1f92f"></a><!-- doxytag: member="afcgi.h::afcgi_end" ref="ca488a5e2137232ac85c412720f1f92f" args="(struct afcgi_sess *s, enum afcgi_return_status rs, int rc)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -277,7 +302,13 @@ Bind network address or socket <dl compact><dt><b>Parameters:</b></dt><dd>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">enum <a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03">afcgi_return_status</a>&nbsp;</td>
-          <td class="paramname"> <em>rs</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>rs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>rc</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -433,23 +464,7 @@ afcgi session want's write <dl compact><dt><b>Parameters:</b></dt><dd>
 
 </div>
 </div><p>
-<hr><h2>Variable Documentation</h2>
-<a class="anchor" name="821a2c31f5d789ffdff52fc192838da2"></a><!-- doxytag: member="afcgi.h::tm" ref="821a2c31f5d789ffdff52fc192838da2" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03">afcgi_return_status</a> <a class="el" href="afcgi_8h.html#821a2c31f5d789ffdff52fc192838da2">tm</a>          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-return status 
-</div>
-</div><p>
-<hr size="1"><address style="align: right;"><small>Generated on Sun Nov 23 14:53:47 2008 for events by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Sun Nov 23 15:16:25 2008 for events by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.1 </small></address>
 </body>
