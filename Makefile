@@ -4,11 +4,11 @@ LDFLAGS = -L../events/ -levents -L../rotbuffer/ -lrotbuffer
 
 OBJS = afcgi.o
 
-test: test.o $(OBJS)
-	$(CC) -o test test.o $(OBJS) $(LDFLAGS)
+libafcgi.a: $(OBJS)
+	$(AR) -rcv libafcgi.a $(OBJS)
 
 clean:
-	rm -f test test.o $(OBJS)
+	rm -f libafcgi.a $(OBJS)
 
 doc:
 	doxygen afcgi.doxygen
