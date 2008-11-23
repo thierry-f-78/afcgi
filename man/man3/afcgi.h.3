@@ -1,4 +1,4 @@
-.TH "afcgi.h" 3 "20 Nov 2008" "Version 0" "events" \" -*- nroff -*-
+.TH "afcgi.h" 3 "23 Nov 2008" "Version 0" "events" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -20,6 +20,9 @@ afcgi.h \-
 .br
 .ti -1c
 .RI "struct \fBafcgi\fP"
+.br
+.ti -1c
+.RI "struct \fBafcgi::rotbuffer\fP"
 .br
 .ti -1c
 .RI "struct \fBafcgi_binder\fP"
@@ -51,13 +54,13 @@ afcgi.h \-
 .ti -1c
 .RI "enum \fBafcgi_callback_names\fP "
 .br
+.ti -1c
+.RI "enum \fBafcgi_return_status\fP { \fBFCGI_REQUEST_COMPLETE\fP =  0, \fBFCGI_CANT_MPX_CONN\fP =  1, \fBFCGI_OVERLOADED\fP =  2, \fBFCGI_UNKNOWN_ROLE\fP =  3 }"
+.br
 .in -1c
 .SS "Functions"
 
 .in +1c
-.ti -1c
-.RI "static void \fBafcgi_set_arg\fP (struct afcgi_sess *s, void *arg)"
-.br
 .ti -1c
 .RI "void \fBafcgi_init\fP (int maxconn)"
 .br
@@ -66,6 +69,25 @@ afcgi.h \-
 .br
 .ti -1c
 .RI "void \fBafcgi_loop\fP (int loop)"
+.br
+.ti -1c
+.RI "static void \fBafcgi_set_arg\fP (struct afcgi_sess *s, void *arg)"
+.br
+.ti -1c
+.RI "void \fBafcgi_want_write\fP (struct afcgi_sess *s)"
+.br
+.ti -1c
+.RI "void \fBafcgi_stop_write\fP (struct afcgi_sess *s)"
+.br
+.ti -1c
+.RI "void \fBafcgi_end\fP (struct afcgi_sess *s, enum \fBafcgi_return_status\fP rs)"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "enum \fBafcgi_return_status\fP \fBtm\fP"
 .br
 .in -1c
 .SH "Detailed Description"
@@ -143,6 +165,24 @@ return length writed
 .SS "enum \fBafcgi_callback_names\fP"
 .PP
 The names of the different callbacks 
+.SS "enum \fBafcgi_return_status\fP"
+.PP
+return status 
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fIFCGI_REQUEST_COMPLETE \fP\fP
+normal end of request. 
+.TP
+\fB\fIFCGI_CANT_MPX_CONN \fP\fP
+rejecting a new request. This happens when a Web server sends concurrent requests over one connection to an application that is designed to process one request at a time per connection. 
+.TP
+\fB\fIFCGI_OVERLOADED \fP\fP
+rejecting a new request. This happens when the application runs out of some resource, e.g. database connections. 
+.TP
+\fB\fIFCGI_UNKNOWN_ROLE \fP\fP
+rejecting a new request. This happens when the Web server has specified a role that is unknown to the application. 
 .SH "Function Documentation"
 .PP 
 .SS "int afcgi_bind (char * bind, \fBafcgi_cb\fP on_new, void * arg)"
@@ -161,6 +201,18 @@ Bind network address or socket
 \fBReturns:\fP
 .RS 4
 if ok return 0, else return < 0 
+.RE
+.PP
+
+.SS "void afcgi_end (struct afcgi_sess * s, enum \fBafcgi_return_status\fP rs)"
+.PP
+afcgi session end 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIs\fP afcgi session identifier 
+.br
+\fIrs\fP return status 
 .RE
 .PP
 
@@ -196,6 +248,31 @@ set easy argument
 .RE
 .PP
 
+.SS "void afcgi_stop_write (struct afcgi_sess * s)"
+.PP
+afcgi session do not write more 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIs\fP afcgi session identifier 
+.RE
+.PP
+
+.SS "void afcgi_want_write (struct afcgi_sess * s)"
+.PP
+afcgi session want's write 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIs\fP afcgi session identifier 
+.RE
+.PP
+
+.SH "Variable Documentation"
+.PP 
+.SS "enum \fBafcgi_return_status\fP \fBtm\fP"
+.PP
+return status 
 .SH "Author"
 .PP 
 Generated automatically by Doxygen for events from the source code.

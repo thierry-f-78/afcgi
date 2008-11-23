@@ -5,20 +5,25 @@
 #include <string.h>
 
 #include "afcgi.h"
+#include "rotbuffer.h"
 
 int afcgi_global_maxconn;
 
 enum afcgi_types {
-	AFCGI_BEGIN_REQUEST     =  1,
-	AFCGI_ABORT_REQUEST     =  2,
+	                               /*  WS->App   management  stream */
+
+	AFCGI_GET_VALUES        =  9,  /*  x         x                  */
+	AFCGI_GET_VALUES_RESULT = 10,  /*            x                  */
+	AFCGI_UNKNOWN_TYPE      = 11,  /*            x                  */
+
+	AFCGI_BEGIN_REQUEST     =  1,  /*  x                            */
+	AFCGI_ABORT_REQUEST     =  2,  /*  x                            */
 	AFCGI_END_REQUEST       =  3,
-	AFCGI_PARAMS            =  4,
-	AFCGI_STDIN             =  5,
-	AFCGI_STDOUT            =  6,
-	AFCGI_STDERR            =  7,
-	AFCGI_DATA              =  8,
-	AFCGI_GET_VALUES        =  9,
-	AFCGI_GET_VALUES_RESULT = 10
+	AFCGI_PARAMS            =  4,  /*  x                     x      */
+	AFCGI_STDIN             =  5,  /*  x                     x      */
+	AFCGI_DATA              =  8,  /*  x                     x      */
+	AFCGI_STDOUT            =  6,  /*                        x      */
+	AFCGI_STDERR            =  7   /*                        x      */
 };
 
 enum afcgi_status {
@@ -132,6 +137,7 @@ static void new_read(int fd, void *arg) {
 		case AFCGI_BEGIN_REQUEST:       goto case_WAIT_REQUEST_HDR;
 		case AFCGI_PARAMS:              goto case_WAIT_PARAMS;
 		case AFCGI_STDIN:               goto case_WAIT_AFCGI_STDIN;
+		case AFCGI_UNKNOWN_TYPE:
 		case AFCGI_ABORT_REQUEST:
 		case AFCGI_END_REQUEST:
 		case AFCGI_STDOUT:
@@ -194,7 +200,8 @@ static void new_read(int fd, void *arg) {
 		                s->h.role, s->h.flags);
 		*/
 		// callback on new
-		a->binder->on_new(s, a->binder->arg);
+		if (a->binder->on_new != NULL)
+			a->binder->on_new(s, a->binder->arg);
 
 		goto case_WAIT_HEADER;
 
@@ -204,7 +211,8 @@ static void new_read(int fd, void *arg) {
 	case_WAIT_PARAMS:
 		// bloc vide: fin des headers http
 		if (a->c.content_len == 0) {
-			s->on_headers(s, s->arg);
+			if (s->on_headers != NULL)
+				s->on_headers(s, s->arg);
 			goto case_WAIT_HEADER;
 		}
 		a->s = WAIT_PARAMS;
@@ -298,7 +306,8 @@ static void new_read(int fd, void *arg) {
 		// bloc vide: fin des data stdin
 		if (a->c.content_len == 0) {
 			// call back
-			s->on_run(s, s->arg);
+			if (s->on_run != NULL)
+				s->on_run(s, s->arg);
 			goto case_WAIT_HEADER;
 		}
 
@@ -322,7 +331,8 @@ static void new_read(int fd, void *arg) {
 			return;
 
 		// callback data ready
-		s->on_receive(s, s->arg, a->buffer, a->buff_len);
+		if (s->on_receive != NULL)
+			s->on_receive(s, s->arg, a->buffer, a->buff_len);
 		goto case_WAIT_HEADER;
 	}
 
@@ -332,56 +342,89 @@ static void new_write(int fd, void *arg) {
 	struct afcgi *a = arg;
 	int len;
 	char *s;
+	struct afcgi_sess *sess;
 	
 	// try writing
-	if (a->write_len > 0) {
-		len = write(a->fd, a->write_start, a->write_len);
-		if (len <= 0)
-			return;
-		else {
-			a->write_start += len;
-			a->write_len   -= len;
-		}
-		if (a->write_len == 0) {
-			a->write_start = a->write_buffer;
-		}
+	rotbuffer_write_fd(&a->buff_wr, a->fd);
+
+	// check for end
+	while (rotbuffer_free_size(&a->buff_wr) > 16 && a->end != NULL) {
+
+		// unsigned char version;
+		rotbuffer_add_byte_wc(&a->buff_wr, AFCGI_VERSION);
+		// unsigned char type;
+		rotbuffer_add_byte_wc(&a->buff_wr, AFCGI_END_REQUEST);
+		// unsigned char requestIdB1;
+		// unsigned char requestIdB0;
+		rotbuffer_add_byte_wc(&a->buff_wr, a->end->request_id >> 8);
+		rotbuffer_add_byte_wc(&a->buff_wr, a->end->request_id & 0x00ff);
+		// unsigned char contentLengthB1;
+		// unsigned char contentLengthB0;
+		rotbuffer_add_byte_wc(&a->buff_wr, 0);
+		rotbuffer_add_byte_wc(&a->buff_wr, 8);
+		// unsigned char paddingLength;
+		rotbuffer_add_byte_wc(&a->buff_wr, 0);
+		// unsigned char reserved;
+		rotbuffer_add_byte_wc(&a->buff_wr, 0);
+
+		// unsigned char appStatusB3;
+		// unsigned char appStatusB2;
+		// unsigned char appStatusB1;
+		// unsigned char appStatusB0;
+		rotbuffer_add_byte_wc(&a->buff_wr, (a->end->rc >> 24) & 0xff);
+		rotbuffer_add_byte_wc(&a->buff_wr, (a->end->rc >> 16) & 0xff);
+		rotbuffer_add_byte_wc(&a->buff_wr, (a->end->rc >>  8) & 0xff);
+		rotbuffer_add_byte_wc(&a->buff_wr, (a->end->rc >>  0) & 0xff);
+		// unsigned char protocolStatus;
+		rotbuffer_add_byte_wc(&a->buff_wr, a->end->return_status);
+		// unsigned char reserved[3];
+		rotbuffer_add_byte_wc(&a->buff_wr, 0);
+		rotbuffer_add_byte_wc(&a->buff_wr, 0);
+		rotbuffer_add_byte_wc(&a->buff_wr, 0);
+
+		// free session
+		sess = a->end;
+		a->end = a->end->end_next;
+		a->sess[sess->request_id] = NULL;
+		free_afcgi_sess(sess);
 	}
 
 	// callback
-	s = a->write_start + AFCGI_HEADER_LEN + a->write_len;
-	len = a->write->on_write(a->write, a->write->arg, s, s - a->write_buffer);
+	if (a->write != NULL) {
+		sess = a->write;
 
-	// build header
-	if (len > 0) {
-		s -= AFCGI_HEADER_LEN;
+		// rotate write turn
+		a->write = a->write->write_next;
 
-		// unsigned char version;
-		s[0] = AFCGI_VERSION;
+		// callback
+		sess->on_write(sess, sess->arg, s, s - a->write_buffer);
 
-		// unsigned char type;
-		s[1] = AFCGI_STDOUT;
+		// build header
+		/*
+		if (len > 0) {
+			s -= AFCGI_HEADER_LEN;
 
-		// unsigned char requestIdB1;
-		// unsigned char requestIdB0;
-		s[2] = a->write->request_id >> 8;
-		s[3] = a->write->request_id & 0x00ff;
+			// unsigned char version;
+			s[0] = AFCGI_VERSION;
+			// unsigned char type;
+			s[1] = AFCGI_STDOUT;
+			// unsigned char requestIdB1;
+			// unsigned char requestIdB0;
+			s[2] = a->write->request_id >> 8;
+			s[3] = a->write->request_id & 0x00ff;
+			// unsigned char contentLengthB1;
+			// unsigned char contentLengthB0;
+			s[4] = len >> 8;
+			s[5] = len & 0x00ff;
+			// unsigned char paddingLength;
+			s[6] = 0;
+			// unsigned char reserved;
+			s[7] = 0;
 
-		// unsigned char contentLengthB1;
-		// unsigned char contentLengthB0;
-		s[4] = len >> 8;
-		s[5] = len & 0x00ff;
-
-		// unsigned char paddingLength;
-		s[6] = 0;
-
-		// unsigned char reserved;
-		s[7] = 0;
-
-		a->write_len  += len + AFCGI_HEADER_LEN;
+			a->write_len += len + AFCGI_HEADER_LEN;
+		}
+		*/
 	}
-
-	// rotate
-	a->write = a->write->write_next;
 }
 
 static void new_conn(int l, void *arg) {
@@ -399,6 +442,7 @@ static void new_conn(int l, void *arg) {
 	a->write = NULL;
 	a->write_start = a->buffer;
 	a->write_len = 0;
+	a->end = NULL;
 	ev_poll_fd_set(fd, EV_POLL_READ, new_read, a);
 }
 
@@ -426,6 +470,15 @@ void afcgi_stop_write(struct afcgi_sess *s) {
 		s->write_next->write_prev = s->write_prev;
 		s->write_prev->write_next = s->write_next;
 	}  
+}
+
+void afcgi_end(struct afcgi_sess *s, enum afcgi_return_status rs, int rc) {
+	s->end_next = s->afcgi->end;
+	s->return_status = rs;
+	s->rc = rc;
+	s->afcgi->end = s;
+	afcgi_stop_write(s);
+	ev_poll_fd_set(s->afcgi->fd, EV_POLL_WRITE, new_write, s->afcgi);
 }
 
 int afcgi_bind(char *bind, afcgi_cb on_new, void *arg) {
