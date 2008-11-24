@@ -7,6 +7,7 @@
 #include "afcgi.h"
 #include "rotbuffer.h"
 
+struct ev_timeout_basic_node tm;
 int afcgi_global_maxconn;
 
 enum afcgi_types {

@@ -63,7 +63,7 @@ enum afcgi_return_status {
 	AFCGI_UNKNOWN_ROLE     = 3
 };
 
-struct ev_timeout_basic_node tm;
+extern struct ev_timeout_basic_node tm;
 
 struct afcgi_sess;
 struct afcgi;
