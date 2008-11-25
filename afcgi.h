@@ -63,8 +63,6 @@ enum afcgi_return_status {
 	AFCGI_UNKNOWN_ROLE     = 3
 };
 
-extern struct ev_timeout_basic_node tm;
-
 struct afcgi_sess;
 struct afcgi;
 
@@ -161,8 +159,9 @@ struct afcgi_binder {
  * @param maxconn The maximun of connection expected (all sockets)
  *                -1: use the max limit (ulimit -n)
  *                >0: use this value, ans set limit
+ * @param tm      The timeout tree pointer from lib events
  */
-void afcgi_init(int maxconn);
+void afcgi_init(int maxconn, struct ev_timeout_basic_node *tm);
 
 /**
  * Bind network address or socket 

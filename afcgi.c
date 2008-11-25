@@ -7,7 +7,6 @@
 #include "afcgi.h"
 #include "rotbuffer.h"
 
-struct ev_timeout_basic_node tm;
 int afcgi_global_maxconn;
 
 enum afcgi_types {
@@ -559,16 +558,16 @@ int afcgi_bind(char *bind, afcgi_cb on_new, void *arg) {
 	return 0;
 }
 
-void afcgi_init(int maxconn) {
+void afcgi_init(int maxconn, struct ev_timeout_basic_node *tm) {
 	afcgi_global_maxconn = maxconn;
 	poll_select_register();
-	ev_timeout_init(&tm);
-	ev_poll_init(maxconn, &tm);
+	ev_timeout_init(tm);
+	ev_poll_init(maxconn, tm);
 }
 
 void afcgi_loop(int loop) {
 	while (1) {
-		ev_poll_poll();
+		ev_poll_poll(!loop);
 		if (loop == 0)
 			break;
 	}
