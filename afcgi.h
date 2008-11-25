@@ -236,8 +236,7 @@ static inline struct afcgi_hdr *
 afcgi_search_header(struct afcgi_sess *s, char *name) {
 	struct afcgi_hdr *h;
 
-	h = s->hdr;
-	while (h != NULL)
+	for (h = s->hdr; h != NULL; h = h->next)
 		if(strcasecmp(name, h->name) == 0)
 			return h;
 	return NULL;
@@ -351,12 +350,12 @@ void afcgi_end(struct afcgi_sess *s, enum afcgi_return_status rs, int rc);
  * @param args... args for log format
  */
 #define afcgi_logmsg(priority, fmt, args...) \
-	{ \
+	do { \
 		if ( (priority) <= AFCGI_MAX_LOG_LEVEL ) { \
 			__afcgi_logmsg((priority), \
-	                      __FILE__, __FUNCTION__, __LINE__, (fmt), ##args); \
+	                      __FILE__, __FUNCTION__, __LINE__, fmt, ##args); \
 		} \
-	}
+	} while(0)
 
 /** 
  * send log message.
