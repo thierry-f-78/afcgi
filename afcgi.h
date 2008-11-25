@@ -224,6 +224,39 @@ afcgi_set_cb_ON_ABORT(struct afcgi_sess *s, afcgi_cb cb) {
 }
 
 /**
+ * search header
+ * @param s afcgi session identifier
+ * @param name header name (case insensitive
+ * @return header if found, NULL if not found
+ */
+static inline struct afcgi_sess *
+afcgi_search_header(struct afcgi_sess *s, char *name) {
+	struct afcgi_hdr *h;
+
+	h = s->hdr;
+	while (h != NULL)
+		if(strcasecmp(name, h->name) == 0)
+			return h;
+	return NULL;
+}
+
+/**
+ * search header, return string format
+ * @param s afcgi session identifier
+ * @param name header name (case insensitive
+ * @return char *header if found, NULL if not found
+ */
+static inline char *
+afcgi_search_header_str(struct afcgi_sess *s, char *name) {
+	struct afcgi_hdr *h;
+
+	h = afcgi_search_header(s, name);
+	if (h == NULL)
+		return NULL;
+	return h->value;
+}
+
+/**
  * afcgi session want's write
  * @param s afcgi session identifier
  */
