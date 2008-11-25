@@ -241,37 +241,70 @@
 <a name="l00224"></a>00224 }
 <a name="l00225"></a>00225 <span class="comment"></span>
 <a name="l00226"></a>00226 <span class="comment">/**</span>
-<a name="l00227"></a>00227 <span class="comment"> * afcgi session want's write</span>
+<a name="l00227"></a>00227 <span class="comment"> * search header</span>
 <a name="l00228"></a>00228 <span class="comment"> * @param s afcgi session identifier</span>
-<a name="l00229"></a>00229 <span class="comment"> */</span>
-<a name="l00230"></a>00230 <span class="keywordtype">void</span> <a class="code" href="afcgi_8h.html#f8a3aa29d940f0c84418792b51347d40">afcgi_want_write</a>(<span class="keyword">struct</span> afcgi_sess *s);
-<a name="l00231"></a>00231 <span class="comment"></span>
-<a name="l00232"></a>00232 <span class="comment">/**</span>
-<a name="l00233"></a>00233 <span class="comment"> * afcgi session do not write more</span>
-<a name="l00234"></a>00234 <span class="comment"> * @param s afcgi session identifier</span>
-<a name="l00235"></a>00235 <span class="comment"> */</span>
-<a name="l00236"></a>00236 <span class="keywordtype">void</span> <a class="code" href="afcgi_8h.html#8757dbf0dc4d2be26413023049483bb7">afcgi_stop_write</a>(<span class="keyword">struct</span> afcgi_sess *s);
-<a name="l00237"></a>00237 <span class="comment"></span>
-<a name="l00238"></a>00238 <span class="comment">/**</span>
-<a name="l00239"></a>00239 <span class="comment"> * write data</span>
-<a name="l00240"></a>00240 <span class="comment"> * @param s afcgi session identifier</span>
-<a name="l00241"></a>00241 <span class="comment"> * @param buff buffer</span>
-<a name="l00242"></a>00242 <span class="comment"> * @param len buffer len</span>
-<a name="l00243"></a>00243 <span class="comment"> * @return size writed</span>
-<a name="l00244"></a>00244 <span class="comment"> */</span>
-<a name="l00245"></a><a class="code" href="afcgi_8h.html#bbb6c6daea7005fce3c408cc8b6aac9a">00245</a> <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code" href="afcgi_8h.html#bbb6c6daea7005fce3c408cc8b6aac9a">afcgi_write</a>(<span class="keyword">struct</span> afcgi_sess *s, <span class="keywordtype">char</span> *buff, <span class="keywordtype">int</span> len) {
-<a name="l00246"></a>00246         <span class="keywordflow">return</span> rotbuffer_read_buff(&amp;s-&gt;afcgi-&gt;buff_wr, buff, len);
-<a name="l00247"></a>00247 }
-<a name="l00248"></a>00248 <span class="comment"></span>
-<a name="l00249"></a>00249 <span class="comment">/**</span>
-<a name="l00250"></a>00250 <span class="comment"> * afcgi session end</span>
-<a name="l00251"></a>00251 <span class="comment"> * @param s afcgi session identifier</span>
-<a name="l00252"></a>00252 <span class="comment"> * @param rs return status</span>
-<a name="l00253"></a>00253 <span class="comment"> */</span>
-<a name="l00254"></a>00254 <span class="keywordtype">void</span> <a class="code" href="afcgi_8h.html#ca488a5e2137232ac85c412720f1f92f">afcgi_end</a>(<span class="keyword">struct</span> afcgi_sess *s, <span class="keyword">enum</span> <a class="code" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03">afcgi_return_status</a> rs, <span class="keywordtype">int</span> rc);
-<a name="l00255"></a>00255 
-<a name="l00256"></a>00256 <span class="preprocessor">#endif</span>
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Nov 25 10:29:09 2008 for events by&nbsp;
+<a name="l00229"></a>00229 <span class="comment"> * @param name header name (case insensitive</span>
+<a name="l00230"></a>00230 <span class="comment"> * @return header if found, NULL if not found</span>
+<a name="l00231"></a>00231 <span class="comment"> */</span>
+<a name="l00232"></a>00232 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">struct </span>afcgi_sess *
+<a name="l00233"></a><a class="code" href="afcgi_8h.html#c98acc00669fce0e8ff621ef3aeb3bcc">00233</a> <a class="code" href="afcgi_8h.html#c98acc00669fce0e8ff621ef3aeb3bcc">afcgi_search_header</a>(<span class="keyword">struct</span> afcgi_sess *s, <span class="keywordtype">char</span> *name) {
+<a name="l00234"></a>00234         <span class="keyword">struct </span>afcgi_hdr *h;
+<a name="l00235"></a>00235 
+<a name="l00236"></a>00236         h = s-&gt;hdr;
+<a name="l00237"></a>00237         <span class="keywordflow">while</span> (h != NULL)
+<a name="l00238"></a>00238                 <span class="keywordflow">if</span>(strcasecmp(name, h-&gt;name) == 0)
+<a name="l00239"></a>00239                         <span class="keywordflow">return</span> h;
+<a name="l00240"></a>00240         <span class="keywordflow">return</span> NULL;
+<a name="l00241"></a>00241 }
+<a name="l00242"></a>00242 <span class="comment"></span>
+<a name="l00243"></a>00243 <span class="comment">/**</span>
+<a name="l00244"></a>00244 <span class="comment"> * search header, return string format</span>
+<a name="l00245"></a>00245 <span class="comment"> * @param s afcgi session identifier</span>
+<a name="l00246"></a>00246 <span class="comment"> * @param name header name (case insensitive</span>
+<a name="l00247"></a>00247 <span class="comment"> * @return char *header if found, NULL if not found</span>
+<a name="l00248"></a>00248 <span class="comment"> */</span>
+<a name="l00249"></a>00249 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">char</span> *
+<a name="l00250"></a><a class="code" href="afcgi_8h.html#6154625a3d09a43dd43807a76e492f95">00250</a> <a class="code" href="afcgi_8h.html#6154625a3d09a43dd43807a76e492f95">afcgi_search_header_str</a>(<span class="keyword">struct</span> afcgi_sess *s, <span class="keywordtype">char</span> *name) {
+<a name="l00251"></a>00251         <span class="keyword">struct </span>afcgi_hdr *h;
+<a name="l00252"></a>00252 
+<a name="l00253"></a>00253         h = <a class="code" href="afcgi_8h.html#c98acc00669fce0e8ff621ef3aeb3bcc">afcgi_search_header</a>(s, name);
+<a name="l00254"></a>00254         <span class="keywordflow">if</span> (h == NULL)
+<a name="l00255"></a>00255                 <span class="keywordflow">return</span> NULL;
+<a name="l00256"></a>00256         <span class="keywordflow">return</span> h-&gt;value;
+<a name="l00257"></a>00257 }
+<a name="l00258"></a>00258 <span class="comment"></span>
+<a name="l00259"></a>00259 <span class="comment">/**</span>
+<a name="l00260"></a>00260 <span class="comment"> * afcgi session want's write</span>
+<a name="l00261"></a>00261 <span class="comment"> * @param s afcgi session identifier</span>
+<a name="l00262"></a>00262 <span class="comment"> */</span>
+<a name="l00263"></a>00263 <span class="keywordtype">void</span> <a class="code" href="afcgi_8h.html#f8a3aa29d940f0c84418792b51347d40">afcgi_want_write</a>(<span class="keyword">struct</span> afcgi_sess *s);
+<a name="l00264"></a>00264 <span class="comment"></span>
+<a name="l00265"></a>00265 <span class="comment">/**</span>
+<a name="l00266"></a>00266 <span class="comment"> * afcgi session do not write more</span>
+<a name="l00267"></a>00267 <span class="comment"> * @param s afcgi session identifier</span>
+<a name="l00268"></a>00268 <span class="comment"> */</span>
+<a name="l00269"></a>00269 <span class="keywordtype">void</span> <a class="code" href="afcgi_8h.html#8757dbf0dc4d2be26413023049483bb7">afcgi_stop_write</a>(<span class="keyword">struct</span> afcgi_sess *s);
+<a name="l00270"></a>00270 <span class="comment"></span>
+<a name="l00271"></a>00271 <span class="comment">/**</span>
+<a name="l00272"></a>00272 <span class="comment"> * write data</span>
+<a name="l00273"></a>00273 <span class="comment"> * @param s afcgi session identifier</span>
+<a name="l00274"></a>00274 <span class="comment"> * @param buff buffer</span>
+<a name="l00275"></a>00275 <span class="comment"> * @param len buffer len</span>
+<a name="l00276"></a>00276 <span class="comment"> * @return size writed</span>
+<a name="l00277"></a>00277 <span class="comment"> */</span>
+<a name="l00278"></a><a class="code" href="afcgi_8h.html#bbb6c6daea7005fce3c408cc8b6aac9a">00278</a> <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code" href="afcgi_8h.html#bbb6c6daea7005fce3c408cc8b6aac9a">afcgi_write</a>(<span class="keyword">struct</span> afcgi_sess *s, <span class="keywordtype">char</span> *buff, <span class="keywordtype">int</span> len) {
+<a name="l00279"></a>00279         <span class="keywordflow">return</span> rotbuffer_read_buff(&amp;s-&gt;afcgi-&gt;buff_wr, buff, len);
+<a name="l00280"></a>00280 }
+<a name="l00281"></a>00281 <span class="comment"></span>
+<a name="l00282"></a>00282 <span class="comment">/**</span>
+<a name="l00283"></a>00283 <span class="comment"> * afcgi session end</span>
+<a name="l00284"></a>00284 <span class="comment"> * @param s afcgi session identifier</span>
+<a name="l00285"></a>00285 <span class="comment"> * @param rs return status</span>
+<a name="l00286"></a>00286 <span class="comment"> */</span>
+<a name="l00287"></a>00287 <span class="keywordtype">void</span> <a class="code" href="afcgi_8h.html#ca488a5e2137232ac85c412720f1f92f">afcgi_end</a>(<span class="keyword">struct</span> afcgi_sess *s, <span class="keyword">enum</span> <a class="code" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03">afcgi_return_status</a> rs, <span class="keywordtype">int</span> rc);
+<a name="l00288"></a>00288 
+<a name="l00289"></a>00289 <span class="preprocessor">#endif</span>
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Nov 25 10:45:47 2008 for events by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.1 </small></address>
 </body>

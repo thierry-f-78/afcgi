@@ -69,6 +69,10 @@ Include dependency graph for afcgi.h:<p><center><img src="afcgi_8h__incl.png" bo
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#c83cbfe4c67ddf9ca6a747cba25944c3">afcgi_set_arg</a> (struct afcgi_sess *s, void *arg)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static struct afcgi_sess *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#c98acc00669fce0e8ff621ef3aeb3bcc">afcgi_search_header</a> (struct afcgi_sess *s, char *name)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#6154625a3d09a43dd43807a76e492f95">afcgi_search_header_str</a> (struct afcgi_sess *s, char *name)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#f8a3aa29d940f0c84418792b51347d40">afcgi_want_write</a> (struct afcgi_sess *s)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#8757dbf0dc4d2be26413023049483bb7">afcgi_stop_write</a> (struct afcgi_sess *s)</td></tr>
@@ -363,6 +367,78 @@ afcgi main loop. This launched the main loop after initialization <dl compact><d
 
 </div>
 </div><p>
+<a class="anchor" name="c98acc00669fce0e8ff621ef3aeb3bcc"></a><!-- doxytag: member="afcgi.h::afcgi_search_header" ref="c98acc00669fce0e8ff621ef3aeb3bcc" args="(struct afcgi_sess *s, char *name)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static struct afcgi_sess* afcgi_search_header           </td>
+          <td>(</td>
+          <td class="paramtype">struct afcgi_sess *&nbsp;</td>
+          <td class="paramname"> <em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&nbsp;</td>
+          <td class="paramname"> <em>name</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"><code> [inline, static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+search header <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>s</em>&nbsp;</td><td>afcgi session identifier </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>name</em>&nbsp;</td><td>header name (case insensitive </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>header if found, NULL if not found </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="6154625a3d09a43dd43807a76e492f95"></a><!-- doxytag: member="afcgi.h::afcgi_search_header_str" ref="6154625a3d09a43dd43807a76e492f95" args="(struct afcgi_sess *s, char *name)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static char* afcgi_search_header_str           </td>
+          <td>(</td>
+          <td class="paramtype">struct afcgi_sess *&nbsp;</td>
+          <td class="paramname"> <em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&nbsp;</td>
+          <td class="paramname"> <em>name</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"><code> [inline, static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+search header, return string format <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>s</em>&nbsp;</td><td>afcgi session identifier </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>name</em>&nbsp;</td><td>header name (case insensitive </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>char *header if found, NULL if not found </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="c83cbfe4c67ddf9ca6a747cba25944c3"></a><!-- doxytag: member="afcgi.h::afcgi_set_arg" ref="c83cbfe4c67ddf9ca6a747cba25944c3" args="(struct afcgi_sess *s, void *arg)" -->
 <div class="memitem">
 <div class="memproto">
@@ -491,7 +567,7 @@ write data <dl compact><dt><b>Parameters:</b></dt><dd>
 
 </div>
 </div><p>
-<hr size="1"><address style="align: right;"><small>Generated on Tue Nov 25 10:29:09 2008 for events by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Tue Nov 25 10:45:47 2008 for events by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.1 </small></address>
 </body>

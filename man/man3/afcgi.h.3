@@ -70,6 +70,12 @@ afcgi.h \-
 .RI "static void \fBafcgi_set_arg\fP (struct afcgi_sess *s, void *arg)"
 .br
 .ti -1c
+.RI "static struct afcgi_sess * \fBafcgi_search_header\fP (struct afcgi_sess *s, char *name)"
+.br
+.ti -1c
+.RI "static char * \fBafcgi_search_header_str\fP (struct afcgi_sess *s, char *name)"
+.br
+.ti -1c
 .RI "void \fBafcgi_want_write\fP (struct afcgi_sess *s)"
 .br
 .ti -1c
@@ -228,6 +234,40 @@ afcgi main loop. This launched the main loop after initialization
 \fBParameters:\fP
 .RS 4
 \fIloop\fP (boolean) 0: the function return, 1: the function never return 
+.RE
+.PP
+
+.SS "static struct afcgi_sess* afcgi_search_header (struct afcgi_sess * s, char * name)\fC [inline, static]\fP"
+.PP
+search header 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIs\fP afcgi session identifier 
+.br
+\fIname\fP header name (case insensitive 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+header if found, NULL if not found 
+.RE
+.PP
+
+.SS "static char* afcgi_search_header_str (struct afcgi_sess * s, char * name)\fC [inline, static]\fP"
+.PP
+search header, return string format 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIs\fP afcgi session identifier 
+.br
+\fIname\fP header name (case insensitive 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+char *header if found, NULL if not found 
 .RE
 .PP
 
