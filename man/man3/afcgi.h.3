@@ -6,6 +6,10 @@ afcgi.h \-
 .SH SYNOPSIS
 .br
 .PP
+\fC#include <stdint.h>\fP
+.br
+\fC#include <string.h>\fP
+.br
 \fC#include <events.h>\fP
 .br
 \fC#include <rotbuffer.h>\fP
@@ -32,6 +36,12 @@ afcgi.h \-
 .in +1c
 .ti -1c
 .RI "#define \fBafcgi_set_callback\fP(sess, name, cb)   afcgi_set_cb_ ## name(sess, cb)"
+.br
+.ti -1c
+.RI "#define \fBAFCGI_MAX_LOG_LEVEL\fP   LOG_WARNING"
+.br
+.ti -1c
+.RI "#define \fBafcgi_logmsg\fP(priority, fmt, args...)"
 .br
 .in -1c
 .SS "Typedefs"
@@ -70,7 +80,7 @@ afcgi.h \-
 .RI "static void \fBafcgi_set_arg\fP (struct afcgi_sess *s, void *arg)"
 .br
 .ti -1c
-.RI "static struct afcgi_sess * \fBafcgi_search_header\fP (struct afcgi_sess *s, char *name)"
+.RI "static struct afcgi_hdr * \fBafcgi_search_header\fP (struct afcgi_sess *s, char *name)"
 .br
 .ti -1c
 .RI "static char * \fBafcgi_search_header_str\fP (struct afcgi_sess *s, char *name)"
@@ -87,12 +97,45 @@ afcgi.h \-
 .ti -1c
 .RI "void \fBafcgi_end\fP (struct afcgi_sess *s, enum \fBafcgi_return_status\fP rs, int rc)"
 .br
+.ti -1c
+.RI "void \fB__afcgi_logmsg\fP (int priority, const char *file, const char *function, int line, char *fmt,...)"
+.br
+.ti -1c
+.RI "void \fBbeweb_set_log_opt\fP (uint32_t flags,...)"
+.br
 .in -1c
 .SH "Detailed Description"
 .PP 
 
 .SH "Define Documentation"
 .PP 
+.SS "#define afcgi_logmsg(priority, fmt, args...)"
+.PP
+\fBValue:\fP
+.PP
+.nf
+{ \
+                if ( (priority) <= AFCGI_MAX_LOG_LEVEL ) { \
+                        __afcgi_logmsg((priority), \
+                              __FILE__, __FUNCTION__, __LINE__, (fmt), ##args); \
+                } \
+        }
+.fi
+send log message. is recomended to use for compilation code simplification
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpriority\fP log level from LOG_DEBUG to LOG_EMERG 
+.br
+\fIfmt\fP log format: ex: 'open file %s' 
+.br
+\fIargs...\fP args for log format 
+.RE
+.PP
+
+.SS "#define AFCGI_MAX_LOG_LEVEL   LOG_WARNING"
+.PP
+all debug logs with level > AFCGI_MAX_LOG_LEVEL are not compiled redifine this define with compilation option for build binary in debug mode or in normal mode 
 .SS "#define afcgi_set_callback(sess, name, cb)   afcgi_set_cb_ ## name(sess, cb)"
 .PP
 set callback 
@@ -184,6 +227,26 @@ rejecting a new request. This happens when the application runs out of some reso
 rejecting a new request. This happens when the Web server has specified a role that is unknown to the application. 
 .SH "Function Documentation"
 .PP 
+.SS "void __afcgi_logmsg (int priority, const char * file, const char * function, int line, char * fmt,  ...)"
+.PP
+send log message. is recomended to use macro
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpriority\fP log level from LOG_DEBUG to LOG_EMERG 
+.br
+\fIfile\fP code filename 
+.br
+\fIfunction\fP code function 
+.br
+\fIline\fP code line 
+.br
+\fIfmt\fP log format: ex: 'open file %s' 
+.br
+\fIargs\fP args for log format 
+.RE
+.PP
+
 .SS "int afcgi_bind (char * bind, \fBafcgi_cb\fP on_new, void * arg)"
 .PP
 Bind network address or socket 
@@ -212,6 +275,8 @@ afcgi session end
 \fIs\fP afcgi session identifier 
 .br
 \fIrs\fP return status 
+.br
+\fIrc\fP return code 
 .RE
 .PP
 
@@ -237,7 +302,7 @@ afcgi main loop. This launched the main loop after initialization
 .RE
 .PP
 
-.SS "static struct afcgi_sess* afcgi_search_header (struct afcgi_sess * s, char * name)\fC [inline, static]\fP"
+.SS "static struct afcgi_hdr* afcgi_search_header (struct afcgi_sess * s, char * name)\fC [inline, static]\fP"
 .PP
 search header 
 .PP
@@ -320,6 +385,101 @@ write data
 .RS 4
 size writed 
 .RE
+.PP
+
+.SS "void beweb_set_log_opt (uint32_t flags,  ...)"
+.PP
+set log modes
+.PP
+\fBParameters:\fP
+.RS 4
+\fIflags,:\fP can takes this values:
+.RE
+.PP
+.IP "\(bu" 2
+AFCGI_LOG_STDERR log on stderr output
+.IP "\(bu" 2
+AFCGI_LOG_SYSLOG log on syslog, this option require 3 parameters
+.IP "  \(bu" 4
+(char *) program name (generally the same AFCGI_LOG_DSP_APP_NAME)
+.IP "  \(bu" 4
+(int) log pid ? : 1=>yes, 0=>no
+.IP "  \(bu" 4
+(int) the facility code:
+.IP "    \(bu" 6
+LOG_KERN : kernel messages
+.IP "    \(bu" 6
+LOG_USER : random user-level messages
+.IP "    \(bu" 6
+LOG_MAIL : mail system
+.IP "    \(bu" 6
+LOG_DAEMON : system daemons
+.IP "    \(bu" 6
+LOG_AUTH : security/authorization messages
+.IP "    \(bu" 6
+LOG_SYSLOG : messages generated internally by syslogd
+.IP "    \(bu" 6
+LOG_LPR : line printer subsystem
+.IP "    \(bu" 6
+LOG_NEWS : network news subsystem
+.IP "    \(bu" 6
+LOG_UUCP : UUCP subsystem
+.IP "    \(bu" 6
+LOG_CRON : clock daemon
+.IP "    \(bu" 6
+LOG_AUTHPRIV : security/authorization messages (private)
+.IP "    \(bu" 6
+LOG_FTP : ftp daemon
+.IP "    \(bu" 6
+LOG_LOCAL0 : reserved for local use
+.IP "    \(bu" 6
+LOG_LOCAL1 : reserved for local use
+.IP "    \(bu" 6
+LOG_LOCAL2 : reserved for local use
+.IP "    \(bu" 6
+LOG_LOCAL3 : reserved for local use
+.IP "    \(bu" 6
+LOG_LOCAL4 : reserved for local use
+.IP "    \(bu" 6
+LOG_LOCAL5 : reserved for local use
+.IP "    \(bu" 6
+LOG_LOCAL6 : reserved for local use
+.IP "    \(bu" 6
+LOG_LOCAL7 : reserved for local use
+.PP
+
+.PP
+
+.PP
+.PP
+.IP "\(bu" 2
+AFCGI_LOG_DSP_LOG_LEVEL display only loglevel upper than the parameter. This option require 1 parameter:
+.IP "  \(bu" 4
+(int) loglevel. default: LOG_WARNING
+.PP
+
+.PP
+.PP
+.IP "\(bu" 2
+AFCGI_LOG_DSP_TIME display time in log
+.IP "\(bu" 2
+AFCGI_LOG_DSP_HOSTNAME display hostname in log
+.IP "\(bu" 2
+AFCGI_LOG_DSP_APP_NAME display application name in log. This option require 1 parameter
+.IP "  \(bu" 4
+(char *) application name
+.PP
+
+.PP
+.PP
+.IP "\(bu" 2
+AFCGI_LOG_DSP_PID display application pid in log
+.IP "\(bu" 2
+AFCGI_LOG_DSP_FUNCTION: log msg function name (generally used for debug)
+.IP "\(bu" 2
+AFCGI_LOG_DSP_FILE: log msg filename (generally used for debug)
+.IP "\(bu" 2
+AFCGI_LOG_DSP_LINE: log msg line (generallyused for debug) 
 .PP
 
 .SH "Author"

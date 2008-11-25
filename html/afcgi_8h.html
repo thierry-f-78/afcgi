@@ -15,7 +15,9 @@
     <li><a href="files.html"><span>File&nbsp;List</span></a></li>
     <li><a href="globals.html"><span>Globals</span></a></li>
   </ul></div>
-<h1>afcgi.h File Reference</h1><code>#include &lt;events.h&gt;</code><br>
+<h1>afcgi.h File Reference</h1><code>#include &lt;stdint.h&gt;</code><br>
+<code>#include &lt;string.h&gt;</code><br>
+<code>#include &lt;events.h&gt;</code><br>
 <code>#include &lt;rotbuffer.h&gt;</code><br>
 
 <p>
@@ -35,6 +37,10 @@ Include dependency graph for afcgi.h:<p><center><img src="afcgi_8h__incl.png" bo
 
 <tr><td colspan="2"><br><h2>Defines</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#600d12d2fb6d3ade3a6c12ee81ce6258">afcgi_set_callback</a>(sess, name, cb)&nbsp;&nbsp;&nbsp;afcgi_set_cb_ ## name(sess, cb)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#4fff298840aad5ab0d512794875b4552">AFCGI_MAX_LOG_LEVEL</a>&nbsp;&nbsp;&nbsp;LOG_WARNING</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#e2e27a334efd3ccea9b24b6e2ba7650d">afcgi_logmsg</a>(priority, fmt, args...)</td></tr>
 
 <tr><td colspan="2"><br><h2>Typedefs</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">typedef void(*)&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#f000732bbd43e116fc79b3df21b4cc24">afcgi_cb</a> (struct afcgi_sess *s, void *arg)</td></tr>
@@ -69,7 +75,7 @@ Include dependency graph for afcgi.h:<p><center><img src="afcgi_8h__incl.png" bo
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#c83cbfe4c67ddf9ca6a747cba25944c3">afcgi_set_arg</a> (struct afcgi_sess *s, void *arg)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">static struct afcgi_sess *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#c98acc00669fce0e8ff621ef3aeb3bcc">afcgi_search_header</a> (struct afcgi_sess *s, char *name)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static struct afcgi_hdr *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#18d31d8aab541baaf7d1b9cdfc94a031">afcgi_search_header</a> (struct afcgi_sess *s, char *name)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#6154625a3d09a43dd43807a76e492f95">afcgi_search_header_str</a> (struct afcgi_sess *s, char *name)</td></tr>
 
@@ -81,9 +87,68 @@ Include dependency graph for afcgi.h:<p><center><img src="afcgi_8h__incl.png" bo
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#ca488a5e2137232ac85c412720f1f92f">afcgi_end</a> (struct afcgi_sess *s, enum <a class="el" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03">afcgi_return_status</a> rs, int rc)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#b818d636e0664a063701cf976e1c3f86">__afcgi_logmsg</a> (int priority, const char *file, const char *function, int line, char *fmt,...)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#172560b077b09e3edd5cc05ca3643e20">beweb_set_log_opt</a> (uint32_t flags,...)</td></tr>
+
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 <hr><h2>Define Documentation</h2>
+<a class="anchor" name="e2e27a334efd3ccea9b24b6e2ba7650d"></a><!-- doxytag: member="afcgi.h::afcgi_logmsg" ref="e2e27a334efd3ccea9b24b6e2ba7650d" args="(priority, fmt, args...)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define afcgi_logmsg          </td>
+          <td>(</td>
+          <td class="paramtype">priority,         <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">fmt,         <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">args...&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<b>Value:</b><div class="fragment"><pre class="fragment">{ \
+                <span class="keywordflow">if</span> ( (priority) &lt;= <a class="code" href="afcgi_8h.html#4fff298840aad5ab0d512794875b4552">AFCGI_MAX_LOG_LEVEL</a> ) { \
+                        <a class="code" href="afcgi_8h.html#b818d636e0664a063701cf976e1c3f86">__afcgi_logmsg</a>((priority), \
+                              __FILE__, __FUNCTION__, __LINE__, (fmt), ##args); \
+                } \
+        }
+</pre></div>send log message. is recomended to use for compilation code simplification<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>priority</em>&nbsp;</td><td>log level from LOG_DEBUG to LOG_EMERG </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>fmt</em>&nbsp;</td><td>log format: ex: "open file %s" </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>args...</em>&nbsp;</td><td>args for log format </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="4fff298840aad5ab0d512794875b4552"></a><!-- doxytag: member="afcgi.h::AFCGI_MAX_LOG_LEVEL" ref="4fff298840aad5ab0d512794875b4552" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define AFCGI_MAX_LOG_LEVEL&nbsp;&nbsp;&nbsp;LOG_WARNING          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+all debug logs with level &gt; AFCGI_MAX_LOG_LEVEL are not compiled redifine this define with compilation option for build binary in debug mode or in normal mode 
+</div>
+</div><p>
 <a class="anchor" name="600d12d2fb6d3ade3a6c12ee81ce6258"></a><!-- doxytag: member="afcgi.h::afcgi_set_callback" ref="600d12d2fb6d3ade3a6c12ee81ce6258" args="(sess, name, cb)" -->
 <div class="memitem">
 <div class="memproto">
@@ -223,6 +288,70 @@ rejecting a new request. This happens when the Web server has specified a role t
 </div>
 </div><p>
 <hr><h2>Function Documentation</h2>
+<a class="anchor" name="b818d636e0664a063701cf976e1c3f86"></a><!-- doxytag: member="afcgi.h::__afcgi_logmsg" ref="b818d636e0664a063701cf976e1c3f86" args="(int priority, const char *file, const char *function, int line, char *fmt,...)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void __afcgi_logmsg           </td>
+          <td>(</td>
+          <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>priority</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&nbsp;</td>
+          <td class="paramname"> <em>file</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&nbsp;</td>
+          <td class="paramname"> <em>function</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>line</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&nbsp;</td>
+          <td class="paramname"> <em>fmt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&nbsp;</td>
+          <td class="paramname"> <em>...</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+send log message. is recomended to use macro<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>priority</em>&nbsp;</td><td>log level from LOG_DEBUG to LOG_EMERG </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>file</em>&nbsp;</td><td>code filename </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>function</em>&nbsp;</td><td>code function </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>line</em>&nbsp;</td><td>code line </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>fmt</em>&nbsp;</td><td>log format: ex: "open file %s" </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>args</em>&nbsp;</td><td>args for log format </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
 <a class="anchor" name="4a6ac5e0fb32cf2b952ce1c2bae08fa4"></a><!-- doxytag: member="afcgi.h::afcgi_bind" ref="4a6ac5e0fb32cf2b952ce1c2bae08fa4" args="(char *bind, afcgi_cb on_new, void *arg)" -->
 <div class="memitem">
 <div class="memproto">
@@ -302,6 +431,7 @@ afcgi session end <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>s</em>&nbsp;</td><td>afcgi session identifier </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>rs</em>&nbsp;</td><td>return status </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>rc</em>&nbsp;</td><td>return code </td></tr>
   </table>
 </dl>
 
@@ -367,12 +497,12 @@ afcgi main loop. This launched the main loop after initialization <dl compact><d
 
 </div>
 </div><p>
-<a class="anchor" name="c98acc00669fce0e8ff621ef3aeb3bcc"></a><!-- doxytag: member="afcgi.h::afcgi_search_header" ref="c98acc00669fce0e8ff621ef3aeb3bcc" args="(struct afcgi_sess *s, char *name)" -->
+<a class="anchor" name="18d31d8aab541baaf7d1b9cdfc94a031"></a><!-- doxytag: member="afcgi.h::afcgi_search_header" ref="18d31d8aab541baaf7d1b9cdfc94a031" args="(struct afcgi_sess *s, char *name)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">static struct afcgi_sess* afcgi_search_header           </td>
+          <td class="memname">static struct afcgi_hdr* afcgi_search_header           </td>
           <td>(</td>
           <td class="paramtype">struct afcgi_sess *&nbsp;</td>
           <td class="paramname"> <em>s</em>, </td>
@@ -567,7 +697,61 @@ write data <dl compact><dt><b>Parameters:</b></dt><dd>
 
 </div>
 </div><p>
-<hr size="1"><address style="align: right;"><small>Generated on Tue Nov 25 10:45:47 2008 for events by&nbsp;
+<a class="anchor" name="172560b077b09e3edd5cc05ca3643e20"></a><!-- doxytag: member="afcgi.h::beweb_set_log_opt" ref="172560b077b09e3edd5cc05ca3643e20" args="(uint32_t flags,...)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void beweb_set_log_opt           </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&nbsp;</td>
+          <td class="paramname"> <em>flags</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&nbsp;</td>
+          <td class="paramname"> <em>...</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+set log modes<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>flags,:</em>&nbsp;</td><td>can takes this values:</td></tr>
+  </table>
+</dl>
+<ul>
+<li>AFCGI_LOG_STDERR log on stderr output</li><li>AFCGI_LOG_SYSLOG log on syslog, this option require 3 parameters<ul>
+<li>(char *) program name (generally the same AFCGI_LOG_DSP_APP_NAME)</li><li>(int) log pid ? : 1=&gt;yes, 0=&gt;no</li><li>(int) the facility code:<ul>
+<li>LOG_KERN : kernel messages</li><li>LOG_USER : random user-level messages</li><li>LOG_MAIL : mail system</li><li>LOG_DAEMON : system daemons</li><li>LOG_AUTH : security/authorization messages</li><li>LOG_SYSLOG : messages generated internally by syslogd</li><li>LOG_LPR : line printer subsystem</li><li>LOG_NEWS : network news subsystem</li><li>LOG_UUCP : UUCP subsystem</li><li>LOG_CRON : clock daemon</li><li>LOG_AUTHPRIV : security/authorization messages (private)</li><li>LOG_FTP : ftp daemon</li><li>LOG_LOCAL0 : reserved for local use</li><li>LOG_LOCAL1 : reserved for local use</li><li>LOG_LOCAL2 : reserved for local use</li><li>LOG_LOCAL3 : reserved for local use</li><li>LOG_LOCAL4 : reserved for local use</li><li>LOG_LOCAL5 : reserved for local use</li><li>LOG_LOCAL6 : reserved for local use</li><li>LOG_LOCAL7 : reserved for local use</li></ul>
+</li></ul>
+</li></ul>
+<p>
+<ul>
+<li>AFCGI_LOG_DSP_LOG_LEVEL display only loglevel upper than the parameter. This option require 1 parameter:<ul>
+<li>(int) loglevel. default: LOG_WARNING</li></ul>
+</li></ul>
+<p>
+<ul>
+<li>AFCGI_LOG_DSP_TIME display time in log</li><li>AFCGI_LOG_DSP_HOSTNAME display hostname in log</li><li>AFCGI_LOG_DSP_APP_NAME display application name in log. This option require 1 parameter<ul>
+<li>(char *) application name</li></ul>
+</li></ul>
+<p>
+<ul>
+<li>AFCGI_LOG_DSP_PID display application pid in log</li><li>AFCGI_LOG_DSP_FUNCTION: log msg function name (generally used for debug)</li><li>AFCGI_LOG_DSP_FILE: log msg filename (generally used for debug)</li><li>AFCGI_LOG_DSP_LINE: log msg line (generallyused for debug) </li></ul>
+
+</div>
+</div><p>
+<hr size="1"><address style="align: right;"><small>Generated on Tue Nov 25 11:29:55 2008 for events by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.1 </small></address>
 </body>
