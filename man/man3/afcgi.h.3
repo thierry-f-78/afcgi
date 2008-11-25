@@ -1,4 +1,4 @@
-.TH "afcgi.h" 3 "23 Nov 2008" "Version 0" "events" \" -*- nroff -*-
+.TH "afcgi.h" 3 "25 Nov 2008" "Version 0" "events" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -58,7 +58,7 @@ afcgi.h \-
 
 .in +1c
 .ti -1c
-.RI "void \fBafcgi_init\fP (int maxconn)"
+.RI "void \fBafcgi_init\fP (int maxconn, struct ev_timeout_basic_node *tm)"
 .br
 .ti -1c
 .RI "int \fBafcgi_bind\fP (char *bind, \fBafcgi_cb\fP on_new, void *arg)"
@@ -209,13 +209,15 @@ afcgi session end
 .RE
 .PP
 
-.SS "void afcgi_init (int maxconn)"
+.SS "void afcgi_init (int maxconn, struct ev_timeout_basic_node * tm)"
 .PP
 init fcgi internals and poller system 
 .PP
 \fBParameters:\fP
 .RS 4
 \fImaxconn\fP The maximun of connection expected (all sockets) -1: use the max limit (ulimit -n) >0: use this value, ans set limit 
+.br
+\fItm\fP The timeout tree pointer from lib events 
 .RE
 .PP
 
