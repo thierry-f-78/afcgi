@@ -138,12 +138,12 @@ afcgi.h \-
 \fBValue:\fP
 .PP
 .nf
-{ \
+do { \
                 if ( (priority) <= AFCGI_MAX_LOG_LEVEL ) { \
                         __afcgi_logmsg((priority), \
-                              __FILE__, __FUNCTION__, __LINE__, (fmt), ##args); \
+                              __FILE__, __FUNCTION__, __LINE__, fmt, ##args); \
                 } \
-        }
+        } while(0)
 .fi
 send log message. is recomended to use for compilation code simplification
 .PP

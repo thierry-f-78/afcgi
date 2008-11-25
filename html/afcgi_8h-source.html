@@ -253,205 +253,204 @@
 <a name="l00236"></a><a class="code" href="afcgi_8h.html#18d31d8aab541baaf7d1b9cdfc94a031">00236</a> <a class="code" href="afcgi_8h.html#18d31d8aab541baaf7d1b9cdfc94a031">afcgi_search_header</a>(<span class="keyword">struct</span> afcgi_sess *s, <span class="keywordtype">char</span> *name) {
 <a name="l00237"></a>00237         <span class="keyword">struct </span>afcgi_hdr *h;
 <a name="l00238"></a>00238 
-<a name="l00239"></a>00239         h = s-&gt;hdr;
-<a name="l00240"></a>00240         <span class="keywordflow">while</span> (h != NULL)
-<a name="l00241"></a>00241                 <span class="keywordflow">if</span>(strcasecmp(name, h-&gt;name) == 0)
-<a name="l00242"></a>00242                         <span class="keywordflow">return</span> h;
-<a name="l00243"></a>00243         <span class="keywordflow">return</span> NULL;
-<a name="l00244"></a>00244 }
-<a name="l00245"></a>00245 <span class="comment"></span>
-<a name="l00246"></a>00246 <span class="comment">/**</span>
-<a name="l00247"></a>00247 <span class="comment"> * search header, return string format</span>
-<a name="l00248"></a>00248 <span class="comment"> * @param s afcgi session identifier</span>
-<a name="l00249"></a>00249 <span class="comment"> * @param name header name (case insensitive</span>
-<a name="l00250"></a>00250 <span class="comment"> * @return char *header if found, NULL if not found</span>
-<a name="l00251"></a>00251 <span class="comment"> */</span>
-<a name="l00252"></a>00252 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">char</span> *
-<a name="l00253"></a><a class="code" href="afcgi_8h.html#6154625a3d09a43dd43807a76e492f95">00253</a> <a class="code" href="afcgi_8h.html#6154625a3d09a43dd43807a76e492f95">afcgi_search_header_str</a>(<span class="keyword">struct</span> afcgi_sess *s, <span class="keywordtype">char</span> *name) {
-<a name="l00254"></a>00254         <span class="keyword">struct </span>afcgi_hdr *h;
-<a name="l00255"></a>00255 
-<a name="l00256"></a>00256         h = <a class="code" href="afcgi_8h.html#18d31d8aab541baaf7d1b9cdfc94a031">afcgi_search_header</a>(s, name);
-<a name="l00257"></a>00257         <span class="keywordflow">if</span> (h == NULL)
-<a name="l00258"></a>00258                 <span class="keywordflow">return</span> NULL;
-<a name="l00259"></a>00259         <span class="keywordflow">return</span> h-&gt;value;
-<a name="l00260"></a>00260 }
-<a name="l00261"></a>00261 <span class="comment"></span>
-<a name="l00262"></a>00262 <span class="comment">/**</span>
-<a name="l00263"></a>00263 <span class="comment"> * afcgi session want's write</span>
-<a name="l00264"></a>00264 <span class="comment"> * @param s afcgi session identifier</span>
-<a name="l00265"></a>00265 <span class="comment"> */</span>
-<a name="l00266"></a>00266 <span class="keywordtype">void</span> <a class="code" href="afcgi_8h.html#f8a3aa29d940f0c84418792b51347d40">afcgi_want_write</a>(<span class="keyword">struct</span> afcgi_sess *s);
-<a name="l00267"></a>00267 <span class="comment"></span>
-<a name="l00268"></a>00268 <span class="comment">/**</span>
-<a name="l00269"></a>00269 <span class="comment"> * afcgi session do not write more</span>
-<a name="l00270"></a>00270 <span class="comment"> * @param s afcgi session identifier</span>
-<a name="l00271"></a>00271 <span class="comment"> */</span>
-<a name="l00272"></a>00272 <span class="keywordtype">void</span> <a class="code" href="afcgi_8h.html#8757dbf0dc4d2be26413023049483bb7">afcgi_stop_write</a>(<span class="keyword">struct</span> afcgi_sess *s);
-<a name="l00273"></a>00273 <span class="comment"></span>
-<a name="l00274"></a>00274 <span class="comment">/**</span>
-<a name="l00275"></a>00275 <span class="comment"> * write data</span>
-<a name="l00276"></a>00276 <span class="comment"> * @param s afcgi session identifier</span>
-<a name="l00277"></a>00277 <span class="comment"> * @param buff buffer</span>
-<a name="l00278"></a>00278 <span class="comment"> * @param len buffer len</span>
-<a name="l00279"></a>00279 <span class="comment"> * @return size writed</span>
-<a name="l00280"></a>00280 <span class="comment"> */</span>
-<a name="l00281"></a><a class="code" href="afcgi_8h.html#bbb6c6daea7005fce3c408cc8b6aac9a">00281</a> <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code" href="afcgi_8h.html#bbb6c6daea7005fce3c408cc8b6aac9a">afcgi_write</a>(<span class="keyword">struct</span> afcgi_sess *s, <span class="keywordtype">char</span> *buff, <span class="keywordtype">int</span> len) {
-<a name="l00282"></a>00282         <span class="keywordflow">return</span> rotbuffer_read_buff(&amp;s-&gt;afcgi-&gt;buff_wr, buff, len);
-<a name="l00283"></a>00283 }
-<a name="l00284"></a>00284 <span class="comment"></span>
-<a name="l00285"></a>00285 <span class="comment">/**</span>
-<a name="l00286"></a>00286 <span class="comment"> * afcgi session end</span>
-<a name="l00287"></a>00287 <span class="comment"> * @param s afcgi session identifier</span>
-<a name="l00288"></a>00288 <span class="comment"> * @param rs return status</span>
-<a name="l00289"></a>00289 <span class="comment"> * @param rc return code</span>
-<a name="l00290"></a>00290 <span class="comment"> */</span>
-<a name="l00291"></a>00291 <span class="keywordtype">void</span> <a class="code" href="afcgi_8h.html#ca488a5e2137232ac85c412720f1f92f">afcgi_end</a>(<span class="keyword">struct</span> afcgi_sess *s, <span class="keyword">enum</span> <a class="code" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03">afcgi_return_status</a> rs, <span class="keywordtype">int</span> rc);
-<a name="l00292"></a>00292 
-<a name="l00293"></a>00293 <span class="comment">/* log priority.</span>
-<a name="l00294"></a>00294 <span class="comment"> * the same level that syslog</span>
-<a name="l00295"></a>00295 <span class="comment"> */</span>
-<a name="l00296"></a>00296 <span class="preprocessor">#ifndef LOG_EMERG</span>
-<a name="l00297"></a>00297 <span class="preprocessor"></span><span class="comment">/** log emergency */</span>
-<a name="l00298"></a><a class="code" href="afcgi_8h.html#5c6e8b60c2512dfc0e0224d25a61cb2c">00298</a> <span class="preprocessor">#       define LOG_EMERG       0</span>
-<a name="l00299"></a>00299 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
-<a name="l00300"></a>00300 <span class="preprocessor"></span>
-<a name="l00301"></a>00301 <span class="preprocessor">#ifndef LOG_ALERT</span>
-<a name="l00302"></a>00302 <span class="preprocessor"></span><span class="comment">/** log alert */</span>
-<a name="l00303"></a><a class="code" href="afcgi_8h.html#12b2a3bb9e3adfeb35b4e5514e7d9043">00303</a> <span class="preprocessor">#       define LOG_ALERT       1</span>
-<a name="l00304"></a>00304 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
-<a name="l00305"></a>00305 <span class="preprocessor"></span>
-<a name="l00306"></a>00306 <span class="preprocessor">#ifndef LOG_CRIT</span>
-<a name="l00307"></a>00307 <span class="preprocessor"></span><span class="comment">/** log critical */</span>
-<a name="l00308"></a><a class="code" href="afcgi_8h.html#aa731313f5c63e855fefb5f6519c3283">00308</a> <span class="preprocessor">#       define LOG_CRIT        2</span>
-<a name="l00309"></a>00309 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
-<a name="l00310"></a>00310 <span class="preprocessor"></span>
-<a name="l00311"></a>00311 <span class="preprocessor">#ifndef LOG_ERR</span>
-<a name="l00312"></a>00312 <span class="preprocessor"></span><span class="comment">/** log error */</span>
-<a name="l00313"></a><a class="code" href="afcgi_8h.html#96fad55b3f5adf08c39e4c877cf185e3">00313</a> <span class="preprocessor">#       define LOG_ERR         3</span>
-<a name="l00314"></a>00314 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
-<a name="l00315"></a>00315 <span class="preprocessor"></span>
-<a name="l00316"></a>00316 <span class="preprocessor">#ifndef LOG_WARNING</span>
-<a name="l00317"></a>00317 <span class="preprocessor"></span><span class="comment">/** log warning */</span>
-<a name="l00318"></a><a class="code" href="afcgi_8h.html#df4476a6a4ea6c74231c826e899d7189">00318</a> <span class="preprocessor">#       define LOG_WARNING     4</span>
-<a name="l00319"></a>00319 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
-<a name="l00320"></a>00320 <span class="preprocessor"></span>
-<a name="l00321"></a>00321 <span class="preprocessor">#ifndef LOG_NOTICE</span>
-<a name="l00322"></a>00322 <span class="preprocessor"></span><span class="comment">/** log notice */</span>
-<a name="l00323"></a><a class="code" href="afcgi_8h.html#d89ee324d180cdcd7defcc709ff9ca42">00323</a> <span class="preprocessor">#       define LOG_NOTICE      5</span>
-<a name="l00324"></a>00324 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
-<a name="l00325"></a>00325 <span class="preprocessor"></span>
-<a name="l00326"></a>00326 <span class="preprocessor">#ifndef LOG_INFO</span>
-<a name="l00327"></a>00327 <span class="preprocessor"></span><span class="comment">/** log info */</span>
-<a name="l00328"></a><a class="code" href="afcgi_8h.html#eb4f36db01bd128c7afeac5889dac311">00328</a> <span class="preprocessor">#       define LOG_INFO        6</span>
-<a name="l00329"></a>00329 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
-<a name="l00330"></a>00330 <span class="preprocessor"></span>
-<a name="l00331"></a>00331 <span class="preprocessor">#ifndef LOG_DEBUG</span>
-<a name="l00332"></a>00332 <span class="preprocessor"></span><span class="comment">/** log debug */</span>
-<a name="l00333"></a><a class="code" href="afcgi_8h.html#6ff63e8955665c4a58b1598f2b07c51a">00333</a> <span class="preprocessor">#       define LOG_DEBUG       7</span>
-<a name="l00334"></a>00334 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
-<a name="l00335"></a>00335 <span class="preprocessor"></span>
-<a name="l00336"></a>00336 <span class="preprocessor">#ifndef AFCGI_MAX_LOG_LEVEL</span>
-<a name="l00337"></a>00337 <span class="preprocessor"></span><span class="comment">/**</span>
-<a name="l00338"></a>00338 <span class="comment"> * all debug logs with level &gt; AFCGI_MAX_LOG_LEVEL are not compiled</span>
-<a name="l00339"></a>00339 <span class="comment"> * redifine this define with compilation option for build binary in</span>
-<a name="l00340"></a>00340 <span class="comment"> * debug mode or in normal mode</span>
-<a name="l00341"></a>00341 <span class="comment"> */</span>
-<a name="l00342"></a><a class="code" href="afcgi_8h.html#4fff298840aad5ab0d512794875b4552">00342</a> <span class="preprocessor">#       define AFCGI_MAX_LOG_LEVEL LOG_WARNING</span>
-<a name="l00343"></a>00343 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
-<a name="l00344"></a>00344 <span class="preprocessor"></span><span class="comment"></span>
-<a name="l00345"></a>00345 <span class="comment">/** </span>
-<a name="l00346"></a>00346 <span class="comment"> * send log message.</span>
-<a name="l00347"></a>00347 <span class="comment"> * is recomended to use for compilation code simplification</span>
-<a name="l00348"></a>00348 <span class="comment"> *</span>
-<a name="l00349"></a>00349 <span class="comment"> * @param priority log level from LOG_DEBUG to LOG_EMERG</span>
-<a name="l00350"></a>00350 <span class="comment"> * @param fmt log format: ex: "open file %s"</span>
-<a name="l00351"></a>00351 <span class="comment"> * @param args... args for log format</span>
-<a name="l00352"></a>00352 <span class="comment"> */</span>
-<a name="l00353"></a><a class="code" href="afcgi_8h.html#e2e27a334efd3ccea9b24b6e2ba7650d">00353</a> <span class="preprocessor">#define afcgi_logmsg(priority, fmt, args...) \</span>
-<a name="l00354"></a>00354 <span class="preprocessor">        { \</span>
-<a name="l00355"></a>00355 <span class="preprocessor">                if ( (priority) &lt;= AFCGI_MAX_LOG_LEVEL ) { \</span>
-<a name="l00356"></a>00356 <span class="preprocessor">                        __afcgi_logmsg((priority), \</span>
-<a name="l00357"></a>00357 <span class="preprocessor">                              __FILE__, __FUNCTION__, __LINE__, (fmt), ##args); \</span>
-<a name="l00358"></a>00358 <span class="preprocessor">                } \</span>
-<a name="l00359"></a>00359 <span class="preprocessor">        }</span>
-<a name="l00360"></a>00360 <span class="preprocessor"></span><span class="comment"></span>
-<a name="l00361"></a>00361 <span class="comment">/** </span>
-<a name="l00362"></a>00362 <span class="comment"> * send log message.</span>
-<a name="l00363"></a>00363 <span class="comment"> * is recomended to use macro</span>
-<a name="l00364"></a>00364 <span class="comment"> *</span>
-<a name="l00365"></a>00365 <span class="comment"> * @param priority log level from LOG_DEBUG to LOG_EMERG</span>
-<a name="l00366"></a>00366 <span class="comment"> * @param file code filename</span>
-<a name="l00367"></a>00367 <span class="comment"> * @param function code function</span>
-<a name="l00368"></a>00368 <span class="comment"> * @param line code line</span>
-<a name="l00369"></a>00369 <span class="comment"> * @param fmt log format: ex: "open file %s"</span>
-<a name="l00370"></a>00370 <span class="comment"> * @param args args for log format</span>
-<a name="l00371"></a>00371 <span class="comment"> */</span>
-<a name="l00372"></a>00372 <span class="keywordtype">void</span> <a class="code" href="afcgi_8h.html#b818d636e0664a063701cf976e1c3f86">__afcgi_logmsg</a>(<span class="keywordtype">int</span> priority, <span class="keyword">const</span> <span class="keywordtype">char</span> *file,
-<a name="l00373"></a>00373                     <span class="keyword">const</span> <span class="keywordtype">char</span> *function, <span class="keywordtype">int</span> line, <span class="keywordtype">char</span> *fmt, ...);
+<a name="l00239"></a>00239         <span class="keywordflow">for</span> (h = s-&gt;hdr; h != NULL; h = h-&gt;next)
+<a name="l00240"></a>00240                 <span class="keywordflow">if</span>(strcasecmp(name, h-&gt;name) == 0)
+<a name="l00241"></a>00241                         <span class="keywordflow">return</span> h;
+<a name="l00242"></a>00242         <span class="keywordflow">return</span> NULL;
+<a name="l00243"></a>00243 }
+<a name="l00244"></a>00244 <span class="comment"></span>
+<a name="l00245"></a>00245 <span class="comment">/**</span>
+<a name="l00246"></a>00246 <span class="comment"> * search header, return string format</span>
+<a name="l00247"></a>00247 <span class="comment"> * @param s afcgi session identifier</span>
+<a name="l00248"></a>00248 <span class="comment"> * @param name header name (case insensitive</span>
+<a name="l00249"></a>00249 <span class="comment"> * @return char *header if found, NULL if not found</span>
+<a name="l00250"></a>00250 <span class="comment"> */</span>
+<a name="l00251"></a>00251 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">char</span> *
+<a name="l00252"></a><a class="code" href="afcgi_8h.html#6154625a3d09a43dd43807a76e492f95">00252</a> <a class="code" href="afcgi_8h.html#6154625a3d09a43dd43807a76e492f95">afcgi_search_header_str</a>(<span class="keyword">struct</span> afcgi_sess *s, <span class="keywordtype">char</span> *name) {
+<a name="l00253"></a>00253         <span class="keyword">struct </span>afcgi_hdr *h;
+<a name="l00254"></a>00254 
+<a name="l00255"></a>00255         h = <a class="code" href="afcgi_8h.html#18d31d8aab541baaf7d1b9cdfc94a031">afcgi_search_header</a>(s, name);
+<a name="l00256"></a>00256         <span class="keywordflow">if</span> (h == NULL)
+<a name="l00257"></a>00257                 <span class="keywordflow">return</span> NULL;
+<a name="l00258"></a>00258         <span class="keywordflow">return</span> h-&gt;value;
+<a name="l00259"></a>00259 }
+<a name="l00260"></a>00260 <span class="comment"></span>
+<a name="l00261"></a>00261 <span class="comment">/**</span>
+<a name="l00262"></a>00262 <span class="comment"> * afcgi session want's write</span>
+<a name="l00263"></a>00263 <span class="comment"> * @param s afcgi session identifier</span>
+<a name="l00264"></a>00264 <span class="comment"> */</span>
+<a name="l00265"></a>00265 <span class="keywordtype">void</span> <a class="code" href="afcgi_8h.html#f8a3aa29d940f0c84418792b51347d40">afcgi_want_write</a>(<span class="keyword">struct</span> afcgi_sess *s);
+<a name="l00266"></a>00266 <span class="comment"></span>
+<a name="l00267"></a>00267 <span class="comment">/**</span>
+<a name="l00268"></a>00268 <span class="comment"> * afcgi session do not write more</span>
+<a name="l00269"></a>00269 <span class="comment"> * @param s afcgi session identifier</span>
+<a name="l00270"></a>00270 <span class="comment"> */</span>
+<a name="l00271"></a>00271 <span class="keywordtype">void</span> <a class="code" href="afcgi_8h.html#8757dbf0dc4d2be26413023049483bb7">afcgi_stop_write</a>(<span class="keyword">struct</span> afcgi_sess *s);
+<a name="l00272"></a>00272 <span class="comment"></span>
+<a name="l00273"></a>00273 <span class="comment">/**</span>
+<a name="l00274"></a>00274 <span class="comment"> * write data</span>
+<a name="l00275"></a>00275 <span class="comment"> * @param s afcgi session identifier</span>
+<a name="l00276"></a>00276 <span class="comment"> * @param buff buffer</span>
+<a name="l00277"></a>00277 <span class="comment"> * @param len buffer len</span>
+<a name="l00278"></a>00278 <span class="comment"> * @return size writed</span>
+<a name="l00279"></a>00279 <span class="comment"> */</span>
+<a name="l00280"></a><a class="code" href="afcgi_8h.html#bbb6c6daea7005fce3c408cc8b6aac9a">00280</a> <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code" href="afcgi_8h.html#bbb6c6daea7005fce3c408cc8b6aac9a">afcgi_write</a>(<span class="keyword">struct</span> afcgi_sess *s, <span class="keywordtype">char</span> *buff, <span class="keywordtype">int</span> len) {
+<a name="l00281"></a>00281         <span class="keywordflow">return</span> rotbuffer_read_buff(&amp;s-&gt;afcgi-&gt;buff_wr, buff, len);
+<a name="l00282"></a>00282 }
+<a name="l00283"></a>00283 <span class="comment"></span>
+<a name="l00284"></a>00284 <span class="comment">/**</span>
+<a name="l00285"></a>00285 <span class="comment"> * afcgi session end</span>
+<a name="l00286"></a>00286 <span class="comment"> * @param s afcgi session identifier</span>
+<a name="l00287"></a>00287 <span class="comment"> * @param rs return status</span>
+<a name="l00288"></a>00288 <span class="comment"> * @param rc return code</span>
+<a name="l00289"></a>00289 <span class="comment"> */</span>
+<a name="l00290"></a>00290 <span class="keywordtype">void</span> <a class="code" href="afcgi_8h.html#ca488a5e2137232ac85c412720f1f92f">afcgi_end</a>(<span class="keyword">struct</span> afcgi_sess *s, <span class="keyword">enum</span> <a class="code" href="afcgi_8h.html#25faf6dd1593c6a9c4577f9166578e03">afcgi_return_status</a> rs, <span class="keywordtype">int</span> rc);
+<a name="l00291"></a>00291 
+<a name="l00292"></a>00292 <span class="comment">/* log priority.</span>
+<a name="l00293"></a>00293 <span class="comment"> * the same level that syslog</span>
+<a name="l00294"></a>00294 <span class="comment"> */</span>
+<a name="l00295"></a>00295 <span class="preprocessor">#ifndef LOG_EMERG</span>
+<a name="l00296"></a>00296 <span class="preprocessor"></span><span class="comment">/** log emergency */</span>
+<a name="l00297"></a><a class="code" href="afcgi_8h.html#5c6e8b60c2512dfc0e0224d25a61cb2c">00297</a> <span class="preprocessor">#       define LOG_EMERG       0</span>
+<a name="l00298"></a>00298 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00299"></a>00299 <span class="preprocessor"></span>
+<a name="l00300"></a>00300 <span class="preprocessor">#ifndef LOG_ALERT</span>
+<a name="l00301"></a>00301 <span class="preprocessor"></span><span class="comment">/** log alert */</span>
+<a name="l00302"></a><a class="code" href="afcgi_8h.html#12b2a3bb9e3adfeb35b4e5514e7d9043">00302</a> <span class="preprocessor">#       define LOG_ALERT       1</span>
+<a name="l00303"></a>00303 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00304"></a>00304 <span class="preprocessor"></span>
+<a name="l00305"></a>00305 <span class="preprocessor">#ifndef LOG_CRIT</span>
+<a name="l00306"></a>00306 <span class="preprocessor"></span><span class="comment">/** log critical */</span>
+<a name="l00307"></a><a class="code" href="afcgi_8h.html#aa731313f5c63e855fefb5f6519c3283">00307</a> <span class="preprocessor">#       define LOG_CRIT        2</span>
+<a name="l00308"></a>00308 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00309"></a>00309 <span class="preprocessor"></span>
+<a name="l00310"></a>00310 <span class="preprocessor">#ifndef LOG_ERR</span>
+<a name="l00311"></a>00311 <span class="preprocessor"></span><span class="comment">/** log error */</span>
+<a name="l00312"></a><a class="code" href="afcgi_8h.html#96fad55b3f5adf08c39e4c877cf185e3">00312</a> <span class="preprocessor">#       define LOG_ERR         3</span>
+<a name="l00313"></a>00313 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00314"></a>00314 <span class="preprocessor"></span>
+<a name="l00315"></a>00315 <span class="preprocessor">#ifndef LOG_WARNING</span>
+<a name="l00316"></a>00316 <span class="preprocessor"></span><span class="comment">/** log warning */</span>
+<a name="l00317"></a><a class="code" href="afcgi_8h.html#df4476a6a4ea6c74231c826e899d7189">00317</a> <span class="preprocessor">#       define LOG_WARNING     4</span>
+<a name="l00318"></a>00318 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00319"></a>00319 <span class="preprocessor"></span>
+<a name="l00320"></a>00320 <span class="preprocessor">#ifndef LOG_NOTICE</span>
+<a name="l00321"></a>00321 <span class="preprocessor"></span><span class="comment">/** log notice */</span>
+<a name="l00322"></a><a class="code" href="afcgi_8h.html#d89ee324d180cdcd7defcc709ff9ca42">00322</a> <span class="preprocessor">#       define LOG_NOTICE      5</span>
+<a name="l00323"></a>00323 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00324"></a>00324 <span class="preprocessor"></span>
+<a name="l00325"></a>00325 <span class="preprocessor">#ifndef LOG_INFO</span>
+<a name="l00326"></a>00326 <span class="preprocessor"></span><span class="comment">/** log info */</span>
+<a name="l00327"></a><a class="code" href="afcgi_8h.html#eb4f36db01bd128c7afeac5889dac311">00327</a> <span class="preprocessor">#       define LOG_INFO        6</span>
+<a name="l00328"></a>00328 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00329"></a>00329 <span class="preprocessor"></span>
+<a name="l00330"></a>00330 <span class="preprocessor">#ifndef LOG_DEBUG</span>
+<a name="l00331"></a>00331 <span class="preprocessor"></span><span class="comment">/** log debug */</span>
+<a name="l00332"></a><a class="code" href="afcgi_8h.html#6ff63e8955665c4a58b1598f2b07c51a">00332</a> <span class="preprocessor">#       define LOG_DEBUG       7</span>
+<a name="l00333"></a>00333 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00334"></a>00334 <span class="preprocessor"></span>
+<a name="l00335"></a>00335 <span class="preprocessor">#ifndef AFCGI_MAX_LOG_LEVEL</span>
+<a name="l00336"></a>00336 <span class="preprocessor"></span><span class="comment">/**</span>
+<a name="l00337"></a>00337 <span class="comment"> * all debug logs with level &gt; AFCGI_MAX_LOG_LEVEL are not compiled</span>
+<a name="l00338"></a>00338 <span class="comment"> * redifine this define with compilation option for build binary in</span>
+<a name="l00339"></a>00339 <span class="comment"> * debug mode or in normal mode</span>
+<a name="l00340"></a>00340 <span class="comment"> */</span>
+<a name="l00341"></a><a class="code" href="afcgi_8h.html#4fff298840aad5ab0d512794875b4552">00341</a> <span class="preprocessor">#       define AFCGI_MAX_LOG_LEVEL LOG_WARNING</span>
+<a name="l00342"></a>00342 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00343"></a>00343 <span class="preprocessor"></span><span class="comment"></span>
+<a name="l00344"></a>00344 <span class="comment">/** </span>
+<a name="l00345"></a>00345 <span class="comment"> * send log message.</span>
+<a name="l00346"></a>00346 <span class="comment"> * is recomended to use for compilation code simplification</span>
+<a name="l00347"></a>00347 <span class="comment"> *</span>
+<a name="l00348"></a>00348 <span class="comment"> * @param priority log level from LOG_DEBUG to LOG_EMERG</span>
+<a name="l00349"></a>00349 <span class="comment"> * @param fmt log format: ex: "open file %s"</span>
+<a name="l00350"></a>00350 <span class="comment"> * @param args... args for log format</span>
+<a name="l00351"></a>00351 <span class="comment"> */</span>
+<a name="l00352"></a><a class="code" href="afcgi_8h.html#e2e27a334efd3ccea9b24b6e2ba7650d">00352</a> <span class="preprocessor">#define afcgi_logmsg(priority, fmt, args...) \</span>
+<a name="l00353"></a>00353 <span class="preprocessor">        do { \</span>
+<a name="l00354"></a>00354 <span class="preprocessor">                if ( (priority) &lt;= AFCGI_MAX_LOG_LEVEL ) { \</span>
+<a name="l00355"></a>00355 <span class="preprocessor">                        __afcgi_logmsg((priority), \</span>
+<a name="l00356"></a>00356 <span class="preprocessor">                              __FILE__, __FUNCTION__, __LINE__, fmt, ##args); \</span>
+<a name="l00357"></a>00357 <span class="preprocessor">                } \</span>
+<a name="l00358"></a>00358 <span class="preprocessor">        } while(0)</span>
+<a name="l00359"></a>00359 <span class="preprocessor"></span><span class="comment"></span>
+<a name="l00360"></a>00360 <span class="comment">/** </span>
+<a name="l00361"></a>00361 <span class="comment"> * send log message.</span>
+<a name="l00362"></a>00362 <span class="comment"> * is recomended to use macro</span>
+<a name="l00363"></a>00363 <span class="comment"> *</span>
+<a name="l00364"></a>00364 <span class="comment"> * @param priority log level from LOG_DEBUG to LOG_EMERG</span>
+<a name="l00365"></a>00365 <span class="comment"> * @param file code filename</span>
+<a name="l00366"></a>00366 <span class="comment"> * @param function code function</span>
+<a name="l00367"></a>00367 <span class="comment"> * @param line code line</span>
+<a name="l00368"></a>00368 <span class="comment"> * @param fmt log format: ex: "open file %s"</span>
+<a name="l00369"></a>00369 <span class="comment"> * @param args args for log format</span>
+<a name="l00370"></a>00370 <span class="comment"> */</span>
+<a name="l00371"></a>00371 <span class="keywordtype">void</span> <a class="code" href="afcgi_8h.html#b818d636e0664a063701cf976e1c3f86">__afcgi_logmsg</a>(<span class="keywordtype">int</span> priority, <span class="keyword">const</span> <span class="keywordtype">char</span> *file,
+<a name="l00372"></a>00372                     <span class="keyword">const</span> <span class="keywordtype">char</span> *function, <span class="keywordtype">int</span> line, <span class="keywordtype">char</span> *fmt, ...);
+<a name="l00373"></a>00373 
 <a name="l00374"></a>00374 
-<a name="l00375"></a>00375 
-<a name="l00376"></a>00376 <span class="preprocessor">#define AFCGI_LOG_STDERR        0x00000001</span>
-<a name="l00377"></a>00377 <span class="preprocessor"></span><span class="preprocessor">#define AFCGI_LOG_DSP_FUNCTION  0x00000004</span>
-<a name="l00378"></a>00378 <span class="preprocessor"></span><span class="preprocessor">#define AFCGI_LOG_DSP_FILE      0x00000010</span>
-<a name="l00379"></a>00379 <span class="preprocessor"></span><span class="preprocessor">#define AFCGI_LOG_DSP_LINE      0x00000020</span>
-<a name="l00380"></a>00380 <span class="preprocessor"></span><span class="preprocessor">#define AFCGI_LOG_DSP_HOSTNAME  0x00000040</span>
-<a name="l00381"></a>00381 <span class="preprocessor"></span><span class="preprocessor">#define AFCGI_LOG_DSP_APP_NAME  0x00000080</span>
-<a name="l00382"></a>00382 <span class="preprocessor"></span><span class="preprocessor">#define AFCGI_LOG_DSP_PID       0x00000100</span>
-<a name="l00383"></a>00383 <span class="preprocessor"></span><span class="preprocessor">#define AFCGI_LOG_DSP_TIME      0x00000200</span>
-<a name="l00384"></a>00384 <span class="preprocessor"></span><span class="preprocessor">#define AFCGI_LOG_SYSLOG        0x00000400</span>
-<a name="l00385"></a>00385 <span class="preprocessor"></span><span class="preprocessor">#define AFCGI_LOG_DSP_LOG_LEVEL 0x00001000</span>
-<a name="l00386"></a>00386 <span class="preprocessor"></span><span class="comment"></span>
-<a name="l00387"></a>00387 <span class="comment">/** </span>
-<a name="l00388"></a>00388 <span class="comment"> * set log modes</span>
-<a name="l00389"></a>00389 <span class="comment"> * </span>
-<a name="l00390"></a>00390 <span class="comment"> * @param flags:  can takes this values:</span>
-<a name="l00391"></a>00391 <span class="comment"> *</span>
-<a name="l00392"></a>00392 <span class="comment"> *  - AFCGI_LOG_STDERR log on stderr output</span>
-<a name="l00393"></a>00393 <span class="comment"> *  - AFCGI_LOG_SYSLOG log on syslog, this option require 3 parameters</span>
-<a name="l00394"></a>00394 <span class="comment"> *     - (char *) program name (generally the same AFCGI_LOG_DSP_APP_NAME)</span>
-<a name="l00395"></a>00395 <span class="comment"> *     - (int) log pid ? : 1=&gt;yes, 0=&gt;no</span>
-<a name="l00396"></a>00396 <span class="comment"> *     - (int) the facility code:</span>
-<a name="l00397"></a>00397 <span class="comment"> *         - LOG_KERN     : kernel messages </span>
-<a name="l00398"></a>00398 <span class="comment"> *         - LOG_USER     : random user-level messages </span>
-<a name="l00399"></a>00399 <span class="comment"> *         - LOG_MAIL     : mail system </span>
-<a name="l00400"></a>00400 <span class="comment"> *         - LOG_DAEMON   : system daemons </span>
-<a name="l00401"></a>00401 <span class="comment"> *         - LOG_AUTH     : security/authorization messages </span>
-<a name="l00402"></a>00402 <span class="comment"> *         - LOG_SYSLOG   : messages generated internally by syslogd </span>
-<a name="l00403"></a>00403 <span class="comment"> *         - LOG_LPR      : line printer subsystem </span>
-<a name="l00404"></a>00404 <span class="comment"> *         - LOG_NEWS     : network news subsystem </span>
-<a name="l00405"></a>00405 <span class="comment"> *         - LOG_UUCP     : UUCP subsystem </span>
-<a name="l00406"></a>00406 <span class="comment"> *         - LOG_CRON     : clock daemon </span>
-<a name="l00407"></a>00407 <span class="comment"> *         - LOG_AUTHPRIV : security/authorization messages (private) </span>
-<a name="l00408"></a>00408 <span class="comment"> *         - LOG_FTP      : ftp daemon </span>
-<a name="l00409"></a>00409 <span class="comment"> *         - LOG_LOCAL0   : reserved for local use </span>
-<a name="l00410"></a>00410 <span class="comment"> *         - LOG_LOCAL1   : reserved for local use </span>
-<a name="l00411"></a>00411 <span class="comment"> *         - LOG_LOCAL2   : reserved for local use </span>
-<a name="l00412"></a>00412 <span class="comment"> *         - LOG_LOCAL3   : reserved for local use </span>
-<a name="l00413"></a>00413 <span class="comment"> *         - LOG_LOCAL4   : reserved for local use </span>
-<a name="l00414"></a>00414 <span class="comment"> *         - LOG_LOCAL5   : reserved for local use </span>
-<a name="l00415"></a>00415 <span class="comment"> *         - LOG_LOCAL6   : reserved for local use </span>
-<a name="l00416"></a>00416 <span class="comment"> *         - LOG_LOCAL7   : reserved for local use </span>
-<a name="l00417"></a>00417 <span class="comment"> *</span>
-<a name="l00418"></a>00418 <span class="comment"> *  - AFCGI_LOG_DSP_LOG_LEVEL display only loglevel upper than the parameter.</span>
-<a name="l00419"></a>00419 <span class="comment"> *                            This option require 1 parameter: </span>
-<a name="l00420"></a>00420 <span class="comment"> *     - (int) loglevel. default: LOG_WARNING</span>
-<a name="l00421"></a>00421 <span class="comment"> *</span>
-<a name="l00422"></a>00422 <span class="comment"> *  - AFCGI_LOG_DSP_TIME      display time in log</span>
-<a name="l00423"></a>00423 <span class="comment"> *  - AFCGI_LOG_DSP_HOSTNAME  display hostname in log</span>
-<a name="l00424"></a>00424 <span class="comment"> *  - AFCGI_LOG_DSP_APP_NAME  display application name in log.</span>
-<a name="l00425"></a>00425 <span class="comment"> *                            This option require 1 parameter</span>
-<a name="l00426"></a>00426 <span class="comment"> *     - (char *) application name</span>
-<a name="l00427"></a>00427 <span class="comment"> *</span>
-<a name="l00428"></a>00428 <span class="comment"> *  - AFCGI_LOG_DSP_PID       display application pid in log</span>
-<a name="l00429"></a>00429 <span class="comment"> *  - AFCGI_LOG_DSP_FUNCTION: log msg function name (generally used for debug)</span>
-<a name="l00430"></a>00430 <span class="comment"> *  - AFCGI_LOG_DSP_FILE:     log msg filename (generally used for debug)</span>
-<a name="l00431"></a>00431 <span class="comment"> *  - AFCGI_LOG_DSP_LINE:     log msg line (generallyused for debug)</span>
-<a name="l00432"></a>00432 <span class="comment"> */</span>
-<a name="l00433"></a>00433 <span class="keywordtype">void</span> <a class="code" href="afcgi_8h.html#dcc2ea93ba98e56ac4c572edb3f160bd">afcgi_set_log_opt</a>(uint32_t flags, ...);
-<a name="l00434"></a>00434 
-<a name="l00435"></a>00435 <span class="preprocessor">#endif</span>
-<a name="l00436"></a>00436 <span class="preprocessor"></span>
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Nov 25 11:38:44 2008 for events by&nbsp;
+<a name="l00375"></a>00375 <span class="preprocessor">#define AFCGI_LOG_STDERR        0x00000001</span>
+<a name="l00376"></a>00376 <span class="preprocessor"></span><span class="preprocessor">#define AFCGI_LOG_DSP_FUNCTION  0x00000004</span>
+<a name="l00377"></a>00377 <span class="preprocessor"></span><span class="preprocessor">#define AFCGI_LOG_DSP_FILE      0x00000010</span>
+<a name="l00378"></a>00378 <span class="preprocessor"></span><span class="preprocessor">#define AFCGI_LOG_DSP_LINE      0x00000020</span>
+<a name="l00379"></a>00379 <span class="preprocessor"></span><span class="preprocessor">#define AFCGI_LOG_DSP_HOSTNAME  0x00000040</span>
+<a name="l00380"></a>00380 <span class="preprocessor"></span><span class="preprocessor">#define AFCGI_LOG_DSP_APP_NAME  0x00000080</span>
+<a name="l00381"></a>00381 <span class="preprocessor"></span><span class="preprocessor">#define AFCGI_LOG_DSP_PID       0x00000100</span>
+<a name="l00382"></a>00382 <span class="preprocessor"></span><span class="preprocessor">#define AFCGI_LOG_DSP_TIME      0x00000200</span>
+<a name="l00383"></a>00383 <span class="preprocessor"></span><span class="preprocessor">#define AFCGI_LOG_SYSLOG        0x00000400</span>
+<a name="l00384"></a>00384 <span class="preprocessor"></span><span class="preprocessor">#define AFCGI_LOG_DSP_LOG_LEVEL 0x00001000</span>
+<a name="l00385"></a>00385 <span class="preprocessor"></span><span class="comment"></span>
+<a name="l00386"></a>00386 <span class="comment">/** </span>
+<a name="l00387"></a>00387 <span class="comment"> * set log modes</span>
+<a name="l00388"></a>00388 <span class="comment"> * </span>
+<a name="l00389"></a>00389 <span class="comment"> * @param flags:  can takes this values:</span>
+<a name="l00390"></a>00390 <span class="comment"> *</span>
+<a name="l00391"></a>00391 <span class="comment"> *  - AFCGI_LOG_STDERR log on stderr output</span>
+<a name="l00392"></a>00392 <span class="comment"> *  - AFCGI_LOG_SYSLOG log on syslog, this option require 3 parameters</span>
+<a name="l00393"></a>00393 <span class="comment"> *     - (char *) program name (generally the same AFCGI_LOG_DSP_APP_NAME)</span>
+<a name="l00394"></a>00394 <span class="comment"> *     - (int) log pid ? : 1=&gt;yes, 0=&gt;no</span>
+<a name="l00395"></a>00395 <span class="comment"> *     - (int) the facility code:</span>
+<a name="l00396"></a>00396 <span class="comment"> *         - LOG_KERN     : kernel messages </span>
+<a name="l00397"></a>00397 <span class="comment"> *         - LOG_USER     : random user-level messages </span>
+<a name="l00398"></a>00398 <span class="comment"> *         - LOG_MAIL     : mail system </span>
+<a name="l00399"></a>00399 <span class="comment"> *         - LOG_DAEMON   : system daemons </span>
+<a name="l00400"></a>00400 <span class="comment"> *         - LOG_AUTH     : security/authorization messages </span>
+<a name="l00401"></a>00401 <span class="comment"> *         - LOG_SYSLOG   : messages generated internally by syslogd </span>
+<a name="l00402"></a>00402 <span class="comment"> *         - LOG_LPR      : line printer subsystem </span>
+<a name="l00403"></a>00403 <span class="comment"> *         - LOG_NEWS     : network news subsystem </span>
+<a name="l00404"></a>00404 <span class="comment"> *         - LOG_UUCP     : UUCP subsystem </span>
+<a name="l00405"></a>00405 <span class="comment"> *         - LOG_CRON     : clock daemon </span>
+<a name="l00406"></a>00406 <span class="comment"> *         - LOG_AUTHPRIV : security/authorization messages (private) </span>
+<a name="l00407"></a>00407 <span class="comment"> *         - LOG_FTP      : ftp daemon </span>
+<a name="l00408"></a>00408 <span class="comment"> *         - LOG_LOCAL0   : reserved for local use </span>
+<a name="l00409"></a>00409 <span class="comment"> *         - LOG_LOCAL1   : reserved for local use </span>
+<a name="l00410"></a>00410 <span class="comment"> *         - LOG_LOCAL2   : reserved for local use </span>
+<a name="l00411"></a>00411 <span class="comment"> *         - LOG_LOCAL3   : reserved for local use </span>
+<a name="l00412"></a>00412 <span class="comment"> *         - LOG_LOCAL4   : reserved for local use </span>
+<a name="l00413"></a>00413 <span class="comment"> *         - LOG_LOCAL5   : reserved for local use </span>
+<a name="l00414"></a>00414 <span class="comment"> *         - LOG_LOCAL6   : reserved for local use </span>
+<a name="l00415"></a>00415 <span class="comment"> *         - LOG_LOCAL7   : reserved for local use </span>
+<a name="l00416"></a>00416 <span class="comment"> *</span>
+<a name="l00417"></a>00417 <span class="comment"> *  - AFCGI_LOG_DSP_LOG_LEVEL display only loglevel upper than the parameter.</span>
+<a name="l00418"></a>00418 <span class="comment"> *                            This option require 1 parameter: </span>
+<a name="l00419"></a>00419 <span class="comment"> *     - (int) loglevel. default: LOG_WARNING</span>
+<a name="l00420"></a>00420 <span class="comment"> *</span>
+<a name="l00421"></a>00421 <span class="comment"> *  - AFCGI_LOG_DSP_TIME      display time in log</span>
+<a name="l00422"></a>00422 <span class="comment"> *  - AFCGI_LOG_DSP_HOSTNAME  display hostname in log</span>
+<a name="l00423"></a>00423 <span class="comment"> *  - AFCGI_LOG_DSP_APP_NAME  display application name in log.</span>
+<a name="l00424"></a>00424 <span class="comment"> *                            This option require 1 parameter</span>
+<a name="l00425"></a>00425 <span class="comment"> *     - (char *) application name</span>
+<a name="l00426"></a>00426 <span class="comment"> *</span>
+<a name="l00427"></a>00427 <span class="comment"> *  - AFCGI_LOG_DSP_PID       display application pid in log</span>
+<a name="l00428"></a>00428 <span class="comment"> *  - AFCGI_LOG_DSP_FUNCTION: log msg function name (generally used for debug)</span>
+<a name="l00429"></a>00429 <span class="comment"> *  - AFCGI_LOG_DSP_FILE:     log msg filename (generally used for debug)</span>
+<a name="l00430"></a>00430 <span class="comment"> *  - AFCGI_LOG_DSP_LINE:     log msg line (generallyused for debug)</span>
+<a name="l00431"></a>00431 <span class="comment"> */</span>
+<a name="l00432"></a>00432 <span class="keywordtype">void</span> <a class="code" href="afcgi_8h.html#dcc2ea93ba98e56ac4c572edb3f160bd">afcgi_set_log_opt</a>(uint32_t flags, ...);
+<a name="l00433"></a>00433 
+<a name="l00434"></a>00434 <span class="preprocessor">#endif</span>
+<a name="l00435"></a>00435 <span class="preprocessor"></span>
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Nov 25 11:50:15 2008 for events by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.1 </small></address>
 </body>
