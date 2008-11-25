@@ -33,7 +33,7 @@ static int       afcgi_hostname_len;
 static char     *afcgi_application_name;
 static int       afcgi_application_name_len;
 
-void beweb_set_log_opt(uint32_t flags, ...){
+void afcgi_set_log_opt(uint32_t flags, ...){
 	struct utsname utsinfo;
 	int code_ret;
 	va_list ap;

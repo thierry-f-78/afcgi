@@ -125,7 +125,7 @@ afcgi.h \-
 .RI "void \fB__afcgi_logmsg\fP (int priority, const char *file, const char *function, int line, char *fmt,...)"
 .br
 .ti -1c
-.RI "void \fBbeweb_set_log_opt\fP (uint32_t flags,...)"
+.RI "void \fBafcgi_set_log_opt\fP (uint32_t flags,...)"
 .br
 .in -1c
 .SH "Detailed Description"
@@ -396,46 +396,7 @@ set easy argument
 .RE
 .PP
 
-.SS "void afcgi_stop_write (struct afcgi_sess * s)"
-.PP
-afcgi session do not write more 
-.PP
-\fBParameters:\fP
-.RS 4
-\fIs\fP afcgi session identifier 
-.RE
-.PP
-
-.SS "void afcgi_want_write (struct afcgi_sess * s)"
-.PP
-afcgi session want's write 
-.PP
-\fBParameters:\fP
-.RS 4
-\fIs\fP afcgi session identifier 
-.RE
-.PP
-
-.SS "static int afcgi_write (struct afcgi_sess * s, char * buff, int len)\fC [inline, static]\fP"
-.PP
-write data 
-.PP
-\fBParameters:\fP
-.RS 4
-\fIs\fP afcgi session identifier 
-.br
-\fIbuff\fP buffer 
-.br
-\fIlen\fP buffer len 
-.RE
-.PP
-\fBReturns:\fP
-.RS 4
-size writed 
-.RE
-.PP
-
-.SS "void beweb_set_log_opt (uint32_t flags,  ...)"
+.SS "void afcgi_set_log_opt (uint32_t flags,  ...)"
 .PP
 set log modes
 .PP
@@ -528,6 +489,45 @@ AFCGI_LOG_DSP_FUNCTION: log msg function name (generally used for debug)
 AFCGI_LOG_DSP_FILE: log msg filename (generally used for debug)
 .IP "\(bu" 2
 AFCGI_LOG_DSP_LINE: log msg line (generallyused for debug) 
+.PP
+
+.SS "void afcgi_stop_write (struct afcgi_sess * s)"
+.PP
+afcgi session do not write more 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIs\fP afcgi session identifier 
+.RE
+.PP
+
+.SS "void afcgi_want_write (struct afcgi_sess * s)"
+.PP
+afcgi session want's write 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIs\fP afcgi session identifier 
+.RE
+.PP
+
+.SS "static int afcgi_write (struct afcgi_sess * s, char * buff, int len)\fC [inline, static]\fP"
+.PP
+write data 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIs\fP afcgi session identifier 
+.br
+\fIbuff\fP buffer 
+.br
+\fIlen\fP buffer len 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+size writed 
+.RE
 .PP
 
 .SH "Author"

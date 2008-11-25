@@ -105,7 +105,7 @@ Include dependency graph for afcgi.h:<p><center><img src="afcgi_8h__incl.png" bo
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#b818d636e0664a063701cf976e1c3f86">__afcgi_logmsg</a> (int priority, const char *file, const char *function, int line, char *fmt,...)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#172560b077b09e3edd5cc05ca3643e20">beweb_set_log_opt</a> (uint32_t flags,...)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#dcc2ea93ba98e56ac4c572edb3f160bd">afcgi_set_log_opt</a> (uint32_t flags,...)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -740,6 +740,60 @@ set easy argument <dl compact><dt><b>Parameters:</b></dt><dd>
 
 </div>
 </div><p>
+<a class="anchor" name="dcc2ea93ba98e56ac4c572edb3f160bd"></a><!-- doxytag: member="afcgi.h::afcgi_set_log_opt" ref="dcc2ea93ba98e56ac4c572edb3f160bd" args="(uint32_t flags,...)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void afcgi_set_log_opt           </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&nbsp;</td>
+          <td class="paramname"> <em>flags</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&nbsp;</td>
+          <td class="paramname"> <em>...</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+set log modes<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>flags,:</em>&nbsp;</td><td>can takes this values:</td></tr>
+  </table>
+</dl>
+<ul>
+<li>AFCGI_LOG_STDERR log on stderr output</li><li>AFCGI_LOG_SYSLOG log on syslog, this option require 3 parameters<ul>
+<li>(char *) program name (generally the same AFCGI_LOG_DSP_APP_NAME)</li><li>(int) log pid ? : 1=&gt;yes, 0=&gt;no</li><li>(int) the facility code:<ul>
+<li>LOG_KERN : kernel messages</li><li>LOG_USER : random user-level messages</li><li>LOG_MAIL : mail system</li><li>LOG_DAEMON : system daemons</li><li>LOG_AUTH : security/authorization messages</li><li>LOG_SYSLOG : messages generated internally by syslogd</li><li>LOG_LPR : line printer subsystem</li><li>LOG_NEWS : network news subsystem</li><li>LOG_UUCP : UUCP subsystem</li><li>LOG_CRON : clock daemon</li><li>LOG_AUTHPRIV : security/authorization messages (private)</li><li>LOG_FTP : ftp daemon</li><li>LOG_LOCAL0 : reserved for local use</li><li>LOG_LOCAL1 : reserved for local use</li><li>LOG_LOCAL2 : reserved for local use</li><li>LOG_LOCAL3 : reserved for local use</li><li>LOG_LOCAL4 : reserved for local use</li><li>LOG_LOCAL5 : reserved for local use</li><li>LOG_LOCAL6 : reserved for local use</li><li>LOG_LOCAL7 : reserved for local use</li></ul>
+</li></ul>
+</li></ul>
+<p>
+<ul>
+<li>AFCGI_LOG_DSP_LOG_LEVEL display only loglevel upper than the parameter. This option require 1 parameter:<ul>
+<li>(int) loglevel. default: LOG_WARNING</li></ul>
+</li></ul>
+<p>
+<ul>
+<li>AFCGI_LOG_DSP_TIME display time in log</li><li>AFCGI_LOG_DSP_HOSTNAME display hostname in log</li><li>AFCGI_LOG_DSP_APP_NAME display application name in log. This option require 1 parameter<ul>
+<li>(char *) application name</li></ul>
+</li></ul>
+<p>
+<ul>
+<li>AFCGI_LOG_DSP_PID display application pid in log</li><li>AFCGI_LOG_DSP_FUNCTION: log msg function name (generally used for debug)</li><li>AFCGI_LOG_DSP_FILE: log msg filename (generally used for debug)</li><li>AFCGI_LOG_DSP_LINE: log msg line (generallyused for debug) </li></ul>
+
+</div>
+</div><p>
 <a class="anchor" name="8757dbf0dc4d2be26413023049483bb7"></a><!-- doxytag: member="afcgi.h::afcgi_stop_write" ref="8757dbf0dc4d2be26413023049483bb7" args="(struct afcgi_sess *s)" -->
 <div class="memitem">
 <div class="memproto">
@@ -833,61 +887,7 @@ write data <dl compact><dt><b>Parameters:</b></dt><dd>
 
 </div>
 </div><p>
-<a class="anchor" name="172560b077b09e3edd5cc05ca3643e20"></a><!-- doxytag: member="afcgi.h::beweb_set_log_opt" ref="172560b077b09e3edd5cc05ca3643e20" args="(uint32_t flags,...)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void beweb_set_log_opt           </td>
-          <td>(</td>
-          <td class="paramtype">uint32_t&nbsp;</td>
-          <td class="paramname"> <em>flags</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&nbsp;</td>
-          <td class="paramname"> <em>...</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-set log modes<p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>flags,:</em>&nbsp;</td><td>can takes this values:</td></tr>
-  </table>
-</dl>
-<ul>
-<li>AFCGI_LOG_STDERR log on stderr output</li><li>AFCGI_LOG_SYSLOG log on syslog, this option require 3 parameters<ul>
-<li>(char *) program name (generally the same AFCGI_LOG_DSP_APP_NAME)</li><li>(int) log pid ? : 1=&gt;yes, 0=&gt;no</li><li>(int) the facility code:<ul>
-<li>LOG_KERN : kernel messages</li><li>LOG_USER : random user-level messages</li><li>LOG_MAIL : mail system</li><li>LOG_DAEMON : system daemons</li><li>LOG_AUTH : security/authorization messages</li><li>LOG_SYSLOG : messages generated internally by syslogd</li><li>LOG_LPR : line printer subsystem</li><li>LOG_NEWS : network news subsystem</li><li>LOG_UUCP : UUCP subsystem</li><li>LOG_CRON : clock daemon</li><li>LOG_AUTHPRIV : security/authorization messages (private)</li><li>LOG_FTP : ftp daemon</li><li>LOG_LOCAL0 : reserved for local use</li><li>LOG_LOCAL1 : reserved for local use</li><li>LOG_LOCAL2 : reserved for local use</li><li>LOG_LOCAL3 : reserved for local use</li><li>LOG_LOCAL4 : reserved for local use</li><li>LOG_LOCAL5 : reserved for local use</li><li>LOG_LOCAL6 : reserved for local use</li><li>LOG_LOCAL7 : reserved for local use</li></ul>
-</li></ul>
-</li></ul>
-<p>
-<ul>
-<li>AFCGI_LOG_DSP_LOG_LEVEL display only loglevel upper than the parameter. This option require 1 parameter:<ul>
-<li>(int) loglevel. default: LOG_WARNING</li></ul>
-</li></ul>
-<p>
-<ul>
-<li>AFCGI_LOG_DSP_TIME display time in log</li><li>AFCGI_LOG_DSP_HOSTNAME display hostname in log</li><li>AFCGI_LOG_DSP_APP_NAME display application name in log. This option require 1 parameter<ul>
-<li>(char *) application name</li></ul>
-</li></ul>
-<p>
-<ul>
-<li>AFCGI_LOG_DSP_PID display application pid in log</li><li>AFCGI_LOG_DSP_FUNCTION: log msg function name (generally used for debug)</li><li>AFCGI_LOG_DSP_FILE: log msg filename (generally used for debug)</li><li>AFCGI_LOG_DSP_LINE: log msg line (generallyused for debug) </li></ul>
-
-</div>
-</div><p>
-<hr size="1"><address style="align: right;"><small>Generated on Tue Nov 25 11:34:03 2008 for events by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Tue Nov 25 11:38:44 2008 for events by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.1 </small></address>
 </body>

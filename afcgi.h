@@ -430,7 +430,7 @@ void __afcgi_logmsg(int priority, const char *file,
  *  - AFCGI_LOG_DSP_FILE:     log msg filename (generally used for debug)
  *  - AFCGI_LOG_DSP_LINE:     log msg line (generallyused for debug)
  */
-void beweb_set_log_opt(uint32_t flags, ...);
+void afcgi_set_log_opt(uint32_t flags, ...);
 
 #endif
 
