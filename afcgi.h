@@ -294,34 +294,42 @@ void afcgi_end(struct afcgi_sess *s, enum afcgi_return_status rs, int rc);
  * the same level that syslog
  */
 #ifndef LOG_EMERG
+/** log emergency */
 #	define LOG_EMERG       0
 #endif
 
 #ifndef LOG_ALERT
+/** log alert */
 #	define LOG_ALERT       1
 #endif
 
 #ifndef LOG_CRIT
+/** log critical */
 #	define LOG_CRIT        2
 #endif
 
 #ifndef LOG_ERR
+/** log error */
 #	define LOG_ERR         3
 #endif
 
 #ifndef LOG_WARNING
+/** log warning */
 #	define LOG_WARNING     4
 #endif
 
 #ifndef LOG_NOTICE
+/** log notice */
 #	define LOG_NOTICE      5
 #endif
 
 #ifndef LOG_INFO
+/** log info */
 #	define LOG_INFO        6
 #endif
 
 #ifndef LOG_DEBUG
+/** log debug */
 #	define LOG_DEBUG       7
 #endif
 

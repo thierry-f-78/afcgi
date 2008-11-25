@@ -38,6 +38,22 @@ Include dependency graph for afcgi.h:<p><center><img src="afcgi_8h__incl.png" bo
 <tr><td colspan="2"><br><h2>Defines</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#600d12d2fb6d3ade3a6c12ee81ce6258">afcgi_set_callback</a>(sess, name, cb)&nbsp;&nbsp;&nbsp;afcgi_set_cb_ ## name(sess, cb)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#5c6e8b60c2512dfc0e0224d25a61cb2c">LOG_EMERG</a>&nbsp;&nbsp;&nbsp;0</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#12b2a3bb9e3adfeb35b4e5514e7d9043">LOG_ALERT</a>&nbsp;&nbsp;&nbsp;1</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#aa731313f5c63e855fefb5f6519c3283">LOG_CRIT</a>&nbsp;&nbsp;&nbsp;2</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#96fad55b3f5adf08c39e4c877cf185e3">LOG_ERR</a>&nbsp;&nbsp;&nbsp;3</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#df4476a6a4ea6c74231c826e899d7189">LOG_WARNING</a>&nbsp;&nbsp;&nbsp;4</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#d89ee324d180cdcd7defcc709ff9ca42">LOG_NOTICE</a>&nbsp;&nbsp;&nbsp;5</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#eb4f36db01bd128c7afeac5889dac311">LOG_INFO</a>&nbsp;&nbsp;&nbsp;6</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#6ff63e8955665c4a58b1598f2b07c51a">LOG_DEBUG</a>&nbsp;&nbsp;&nbsp;7</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#4fff298840aad5ab0d512794875b4552">AFCGI_MAX_LOG_LEVEL</a>&nbsp;&nbsp;&nbsp;LOG_WARNING</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="afcgi_8h.html#e2e27a334efd3ccea9b24b6e2ba7650d">afcgi_logmsg</a>(priority, fmt, args...)</td></tr>
@@ -180,6 +196,126 @@ set callback <dl compact><dt><b>Parameters:</b></dt><dd>
   </table>
 </dl>
 
+</div>
+</div><p>
+<a class="anchor" name="12b2a3bb9e3adfeb35b4e5514e7d9043"></a><!-- doxytag: member="afcgi.h::LOG_ALERT" ref="12b2a3bb9e3adfeb35b4e5514e7d9043" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOG_ALERT&nbsp;&nbsp;&nbsp;1          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+log alert 
+</div>
+</div><p>
+<a class="anchor" name="aa731313f5c63e855fefb5f6519c3283"></a><!-- doxytag: member="afcgi.h::LOG_CRIT" ref="aa731313f5c63e855fefb5f6519c3283" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOG_CRIT&nbsp;&nbsp;&nbsp;2          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+log critical 
+</div>
+</div><p>
+<a class="anchor" name="6ff63e8955665c4a58b1598f2b07c51a"></a><!-- doxytag: member="afcgi.h::LOG_DEBUG" ref="6ff63e8955665c4a58b1598f2b07c51a" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOG_DEBUG&nbsp;&nbsp;&nbsp;7          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+log debug 
+</div>
+</div><p>
+<a class="anchor" name="5c6e8b60c2512dfc0e0224d25a61cb2c"></a><!-- doxytag: member="afcgi.h::LOG_EMERG" ref="5c6e8b60c2512dfc0e0224d25a61cb2c" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOG_EMERG&nbsp;&nbsp;&nbsp;0          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+log emergency 
+</div>
+</div><p>
+<a class="anchor" name="96fad55b3f5adf08c39e4c877cf185e3"></a><!-- doxytag: member="afcgi.h::LOG_ERR" ref="96fad55b3f5adf08c39e4c877cf185e3" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOG_ERR&nbsp;&nbsp;&nbsp;3          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+log error 
+</div>
+</div><p>
+<a class="anchor" name="eb4f36db01bd128c7afeac5889dac311"></a><!-- doxytag: member="afcgi.h::LOG_INFO" ref="eb4f36db01bd128c7afeac5889dac311" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOG_INFO&nbsp;&nbsp;&nbsp;6          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+log info 
+</div>
+</div><p>
+<a class="anchor" name="d89ee324d180cdcd7defcc709ff9ca42"></a><!-- doxytag: member="afcgi.h::LOG_NOTICE" ref="d89ee324d180cdcd7defcc709ff9ca42" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOG_NOTICE&nbsp;&nbsp;&nbsp;5          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+log notice 
+</div>
+</div><p>
+<a class="anchor" name="df4476a6a4ea6c74231c826e899d7189"></a><!-- doxytag: member="afcgi.h::LOG_WARNING" ref="df4476a6a4ea6c74231c826e899d7189" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOG_WARNING&nbsp;&nbsp;&nbsp;4          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+log warning 
 </div>
 </div><p>
 <hr><h2>Typedef Documentation</h2>
@@ -751,7 +887,7 @@ set log modes<p>
 
 </div>
 </div><p>
-<hr size="1"><address style="align: right;"><small>Generated on Tue Nov 25 11:29:55 2008 for events by&nbsp;
+<hr size="1"><address style="align: right;"><small>Generated on Tue Nov 25 11:34:03 2008 for events by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.1 </small></address>
 </body>

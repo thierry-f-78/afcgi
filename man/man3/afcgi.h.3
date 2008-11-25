@@ -38,6 +38,30 @@ afcgi.h \-
 .RI "#define \fBafcgi_set_callback\fP(sess, name, cb)   afcgi_set_cb_ ## name(sess, cb)"
 .br
 .ti -1c
+.RI "#define \fBLOG_EMERG\fP   0"
+.br
+.ti -1c
+.RI "#define \fBLOG_ALERT\fP   1"
+.br
+.ti -1c
+.RI "#define \fBLOG_CRIT\fP   2"
+.br
+.ti -1c
+.RI "#define \fBLOG_ERR\fP   3"
+.br
+.ti -1c
+.RI "#define \fBLOG_WARNING\fP   4"
+.br
+.ti -1c
+.RI "#define \fBLOG_NOTICE\fP   5"
+.br
+.ti -1c
+.RI "#define \fBLOG_INFO\fP   6"
+.br
+.ti -1c
+.RI "#define \fBLOG_DEBUG\fP   7"
+.br
+.ti -1c
 .RI "#define \fBAFCGI_MAX_LOG_LEVEL\fP   LOG_WARNING"
 .br
 .ti -1c
@@ -150,6 +174,30 @@ set callback
 .RE
 .PP
 
+.SS "#define LOG_ALERT   1"
+.PP
+log alert 
+.SS "#define LOG_CRIT   2"
+.PP
+log critical 
+.SS "#define LOG_DEBUG   7"
+.PP
+log debug 
+.SS "#define LOG_EMERG   0"
+.PP
+log emergency 
+.SS "#define LOG_ERR   3"
+.PP
+log error 
+.SS "#define LOG_INFO   6"
+.PP
+log info 
+.SS "#define LOG_NOTICE   5"
+.PP
+log notice 
+.SS "#define LOG_WARNING   4"
+.PP
+log warning 
 .SH "Typedef Documentation"
 .PP 
 .SS "typedef void(*) \fBafcgi_cb\fP(struct afcgi_sess *s, void *arg)"
