@@ -13,6 +13,9 @@
 #ifndef __AFCGI_H__
 #define __AFCGI_H__
 
+#include <stdint.h>
+#include <string.h>
+
 #include <events.h>
 #include <rotbuffer.h>
 
@@ -229,7 +232,7 @@ afcgi_set_cb_ON_ABORT(struct afcgi_sess *s, afcgi_cb cb) {
  * @param name header name (case insensitive
  * @return header if found, NULL if not found
  */
-static inline struct afcgi_sess *
+static inline struct afcgi_hdr *
 afcgi_search_header(struct afcgi_sess *s, char *name) {
 	struct afcgi_hdr *h;
 
@@ -283,7 +286,143 @@ static inline int afcgi_write(struct afcgi_sess *s, char *buff, int len) {
  * afcgi session end
  * @param s afcgi session identifier
  * @param rs return status
+ * @param rc return code
  */
 void afcgi_end(struct afcgi_sess *s, enum afcgi_return_status rs, int rc);
 
+/* log priority.
+ * the same level that syslog
+ */
+#ifndef LOG_EMERG
+#	define LOG_EMERG       0
 #endif
+
+#ifndef LOG_ALERT
+#	define LOG_ALERT       1
+#endif
+
+#ifndef LOG_CRIT
+#	define LOG_CRIT        2
+#endif
+
+#ifndef LOG_ERR
+#	define LOG_ERR         3
+#endif
+
+#ifndef LOG_WARNING
+#	define LOG_WARNING     4
+#endif
+
+#ifndef LOG_NOTICE
+#	define LOG_NOTICE      5
+#endif
+
+#ifndef LOG_INFO
+#	define LOG_INFO        6
+#endif
+
+#ifndef LOG_DEBUG
+#	define LOG_DEBUG       7
+#endif
+
+#ifndef AFCGI_MAX_LOG_LEVEL
+/**
+ * all debug logs with level > AFCGI_MAX_LOG_LEVEL are not compiled
+ * redifine this define with compilation option for build binary in
+ * debug mode or in normal mode
+ */
+#	define AFCGI_MAX_LOG_LEVEL LOG_WARNING
+#endif
+
+/** 
+ * send log message.
+ * is recomended to use for compilation code simplification
+ *
+ * @param priority log level from LOG_DEBUG to LOG_EMERG
+ * @param fmt log format: ex: "open file %s"
+ * @param args... args for log format
+ */
+#define afcgi_logmsg(priority, fmt, args...) \
+	{ \
+		if ( (priority) <= AFCGI_MAX_LOG_LEVEL ) { \
+			__afcgi_logmsg((priority), \
+	                      __FILE__, __FUNCTION__, __LINE__, (fmt), ##args); \
+		} \
+	}
+
+/** 
+ * send log message.
+ * is recomended to use macro
+ *
+ * @param priority log level from LOG_DEBUG to LOG_EMERG
+ * @param file code filename
+ * @param function code function
+ * @param line code line
+ * @param fmt log format: ex: "open file %s"
+ * @param args args for log format
+ */
+void __afcgi_logmsg(int priority, const char *file,
+                    const char *function, int line, char *fmt, ...);
+
+
+#define AFCGI_LOG_STDERR        0x00000001
+#define AFCGI_LOG_DSP_FUNCTION  0x00000004
+#define AFCGI_LOG_DSP_FILE      0x00000010
+#define AFCGI_LOG_DSP_LINE      0x00000020
+#define AFCGI_LOG_DSP_HOSTNAME  0x00000040
+#define AFCGI_LOG_DSP_APP_NAME  0x00000080
+#define AFCGI_LOG_DSP_PID       0x00000100
+#define AFCGI_LOG_DSP_TIME      0x00000200
+#define AFCGI_LOG_SYSLOG        0x00000400
+#define AFCGI_LOG_DSP_LOG_LEVEL 0x00001000
+
+/** 
+ * set log modes
+ * 
+ * @param flags:  can takes this values:
+ *
+ *  - AFCGI_LOG_STDERR log on stderr output
+ *  - AFCGI_LOG_SYSLOG log on syslog, this option require 3 parameters
+ *     - (char *) program name (generally the same AFCGI_LOG_DSP_APP_NAME)
+ *     - (int) log pid ? : 1=>yes, 0=>no
+ *     - (int) the facility code:
+ *         - LOG_KERN     : kernel messages 
+ *         - LOG_USER     : random user-level messages 
+ *         - LOG_MAIL     : mail system 
+ *         - LOG_DAEMON   : system daemons 
+ *         - LOG_AUTH     : security/authorization messages 
+ *         - LOG_SYSLOG   : messages generated internally by syslogd 
+ *         - LOG_LPR      : line printer subsystem 
+ *         - LOG_NEWS     : network news subsystem 
+ *         - LOG_UUCP     : UUCP subsystem 
+ *         - LOG_CRON     : clock daemon 
+ *         - LOG_AUTHPRIV : security/authorization messages (private) 
+ *         - LOG_FTP      : ftp daemon 
+ *         - LOG_LOCAL0   : reserved for local use 
+ *         - LOG_LOCAL1   : reserved for local use 
+ *         - LOG_LOCAL2   : reserved for local use 
+ *         - LOG_LOCAL3   : reserved for local use 
+ *         - LOG_LOCAL4   : reserved for local use 
+ *         - LOG_LOCAL5   : reserved for local use 
+ *         - LOG_LOCAL6   : reserved for local use 
+ *         - LOG_LOCAL7   : reserved for local use 
+ *
+ *  - AFCGI_LOG_DSP_LOG_LEVEL display only loglevel upper than the parameter.
+ *                            This option require 1 parameter: 
+ *     - (int) loglevel. default: LOG_WARNING
+ *
+ *  - AFCGI_LOG_DSP_TIME      display time in log
+ *  - AFCGI_LOG_DSP_HOSTNAME  display hostname in log
+ *  - AFCGI_LOG_DSP_APP_NAME  display application name in log.
+ *                            This option require 1 parameter
+ *     - (char *) application name
+ *
+ *  - AFCGI_LOG_DSP_PID       display application pid in log
+ *  - AFCGI_LOG_DSP_FUNCTION: log msg function name (generally used for debug)
+ *  - AFCGI_LOG_DSP_FILE:     log msg filename (generally used for debug)
+ *  - AFCGI_LOG_DSP_LINE:     log msg line (generallyused for debug)
+ */
+void beweb_set_log_opt(uint32_t flags, ...);
+
+#endif
+
