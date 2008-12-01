@@ -455,7 +455,7 @@ static void new_write(int fd, void *arg) {
 		// if no data writed
 		if (rotbuffer_store(&a->buff_wr) == p2) {
 			rotbuffer_seek_wc(&a->buff_wr, - AFCGI_HEADER_LEN);
-			continue;
+			break;
 		}
 
 		// build header
