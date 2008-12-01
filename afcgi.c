@@ -384,6 +384,7 @@ static void new_write(int fd, void *arg) {
 	struct afcgi_sess *sess;
 	char *p, *p2;
 	int data;
+	int request_id;
 	
 	// try writing
 	rotbuffer_write_fd(&a->buff_wr, a->fd);
@@ -435,6 +436,7 @@ static void new_write(int fd, void *arg) {
 
 		// get session
 		sess = a->write;
+		request_id = a->write->request_id;
 
 		// move rotbuffer
 		// if no space avalaible, return
@@ -463,9 +465,8 @@ static void new_write(int fd, void *arg) {
 		p = rotbuffer_add_byte_at_pos(&a->buff_wr, p, AFCGI_STDOUT);
 		// unsigned char requestIdB1;
 		// unsigned char requestIdB0;
-		data = a->write->request_id;
-		p = rotbuffer_add_byte_at_pos(&a->buff_wr, p, data >> 8);
-		p = rotbuffer_add_byte_at_pos(&a->buff_wr, p, data & 0xff);
+		p = rotbuffer_add_byte_at_pos(&a->buff_wr, p, request_id >> 8);
+		p = rotbuffer_add_byte_at_pos(&a->buff_wr, p, request_id & 0xff);
 		// unsigned char contentLengthB1;
 		// unsigned char contentLengthB0;
 		data = rotbuffer_pos_diff(&a->buff_wr, p2, rotbuffer_store(&a->buff_wr));

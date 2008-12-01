@@ -205,17 +205,17 @@ void __afcgi_logmsg(int priority, const char *file, const char *function,
 			len = snprintf(str_current, 128, "[%d] ", line);
 			break;
 		case AFCGI_LOG_DSP_FILE|AFCGI_LOG_DSP_FUNCTION:
-			len = snprintf(str_current, 128, "[%s %s] ", file, function);
+			len = snprintf(str_current, 128, "[%s %s] ", function, file);
 			break;
 		case AFCGI_LOG_DSP_FILE|AFCGI_LOG_DSP_LINE:
-			len = snprintf(str_current, 128, "[%s %d] ", file, line);
+			len = snprintf(str_current, 128, "[%s:%d] ", file, line);
 			break;
 		case AFCGI_LOG_DSP_FUNCTION|AFCGI_LOG_DSP_LINE:
 			len = snprintf(str_current, 128, "[%s %d] ", function, line);
 			break;
 		case AFCGI_LOG_DSP_FILE|AFCGI_LOG_DSP_FUNCTION|AFCGI_LOG_DSP_LINE:
-			len = snprintf(str_current, 128, "[%s %s %d] ",
-			               file, function, line);
+			len = snprintf(str_current, 128, "[%s %s:%d] ",
+			               function, file, line);
 			break;
 	}
 	str_current += len;
