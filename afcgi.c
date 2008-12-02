@@ -527,7 +527,7 @@ static void new_conn(int l, void *arg) {
 	struct afcgi_binder *binder = arg;
 
 	fd = ev_socket_accept(l, &addr);
-	a = (struct afcgi *)malloc(sizeof(struct afcgi));
+	a = (struct afcgi *)calloc(1, sizeof(struct afcgi));
 	a->fd = fd;
 	a->s = WAIT_HEADER;
 	a->head = (char *)&a->c;
