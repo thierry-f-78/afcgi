@@ -52,7 +52,7 @@ static void free_afcgi_sess(struct afcgi_sess *s) {
 static void free_afcgi(struct afcgi *a) {
 	int i;
 
-	for (i=0; i<(1<<16); i++)
+	for (i=0; i<AFCGI_MAX_SESSION; i++)
 		if (a->sess[i] != NULL)
 			free_afcgi_sess(a->sess[i]);
 	free(a);

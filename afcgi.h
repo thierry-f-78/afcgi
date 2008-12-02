@@ -22,6 +22,7 @@
 #define AFCGI_VERSION 1
 #define AFCGI_HEADER_LEN  8
 #define AFCGI_BUFFER_SIZE (1<<16)
+#define AFCGI_MAX_SESSION (1<<16)
 
 /** The names of the different callbacks */
 enum afcgi_callback_names {
@@ -135,7 +136,7 @@ struct afcgi {
 	} c;
 	char *head;
 	struct afcgi_binder *binder;
-	struct afcgi_sess *sess[AFCGI_BUFFER_SIZE];
+	struct afcgi_sess *sess[AFCGI_MAX_SESSION];
 
 	// read
 	char buffer[AFCGI_BUFFER_SIZE];
