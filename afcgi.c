@@ -7,6 +7,8 @@
 #include "afcgi.h"
 #include "rotbuffer.h"
 
+// #define AFCGI_DEBUG
+
 int afcgi_global_maxconn;
 
 enum afcgi_types {
@@ -97,6 +99,9 @@ static void new_read(int fd, void *arg) {
 			return;
 
 		else if (sz == 0) {	
+#ifdef AFCGI_DEBUG
+			fprintf(stderr, "Le serveur web a fermé\n");
+#endif
 			conn_bye(a);
 			return;
 		}
@@ -115,16 +120,31 @@ static void new_read(int fd, void *arg) {
 		ub = ((char *)&a->c)[5];
 		a->c.content_len = ( ua << 8 ) | ub;
 
-		/*
-		fprintf(stderr, "Headers:       \n"
+#ifdef AFCGI_DEBUG
+		char *type;
+		switch (a->c.type) {
+		case AFCGI_GET_VALUES:        type = "AFCGI_GET_VALUES";        break;
+		case AFCGI_GET_VALUES_RESULT: type = "AFCGI_GET_VALUES_RESULT"; break;
+		case AFCGI_UNKNOWN_TYPE:      type = "AFCGI_UNKNOWN_TYPE";      break;
+		case AFCGI_BEGIN_REQUEST:     type = "AFCGI_BEGIN_REQUEST";     break;
+		case AFCGI_ABORT_REQUEST:     type = "AFCGI_ABORT_REQUEST";     break;
+		case AFCGI_END_REQUEST:       type = "AFCGI_END_REQUEST";       break;
+		case AFCGI_PARAMS:            type = "AFCGI_PARAMS";            break;
+		case AFCGI_STDIN:             type = "AFCGI_STDIN";             break;
+		case AFCGI_DATA:              type = "AFCGI_DATA";              break;
+		case AFCGI_STDOUT:            type = "AFCGI_STDOUT";            break;
+		case AFCGI_STDERR:            type = "AFCGI_STDERR";            break;
+		default:                      type = "UNKNOWN";                 break;
+		}
+		fprintf(stderr, "SRV packet header:\n"
 		                "  version    : %d\n"
-		                "  type       : %d\n"
+		                "  type       : %s(%d)\n"
 		                "  request_id : %d\n"
 		                "  content_len: %d\n"
 		                "  padding_len: %d\n",
-		                a->c.version, a->c.type, a->c.request_id,
+		                a->c.version, type, a->c.type, a->c.request_id,
 		                a->c.content_len, a->c.padding_len);
-		*/
+#endif
 		// retrieve afcgi session
 		s = a->sess[a->c.request_id];
 		if (s == NULL && a->c.type != AFCGI_BEGIN_REQUEST) {
@@ -198,12 +218,12 @@ static void new_read(int fd, void *arg) {
 		ub = ((char *)&s->h)[1];
 		s->h.role  = ( ua << 8 ) | ub;
 
-		/*
+#ifdef AFCGI_DEBUG
 		fprintf(stderr, "begin request headers:\n"
 		                "  role       : %d\n"
 		                "  flags      : 0x%02x\n",
 		                s->h.role, s->h.flags);
-		*/
+#endif
 		// callback on new
 		if (a->binder->on_new != NULL)
 			a->binder->on_new(s, a->binder->arg);
@@ -409,6 +429,16 @@ static void new_write(int fd, void *arg) {
 		// unsigned char reserved;
 		rotbuffer_add_byte_wc(&a->buff_wr, 0);
 
+#ifdef AFCGI_DEBUG
+		fprintf(stderr, "CLI packet header:\n"
+		                "  version    : %d\n"
+		                "  type       : AFCGI_END_REQUEST(%d)\n"
+		                "  request_id : %d\n"
+		                "  content_len: 8\n"
+		                "  padding_len: 0\n",
+		                AFCGI_VERSION, AFCGI_END_REQUEST, a->end->request_id);
+#endif
+
 		// unsigned char appStatusB3;
 		// unsigned char appStatusB2;
 		// unsigned char appStatusB1;
@@ -476,6 +506,17 @@ static void new_write(int fd, void *arg) {
 		p = rotbuffer_add_byte_at_pos(&a->buff_wr, p, 0);
 		// unsigned char reserved;
 		p = rotbuffer_add_byte_at_pos(&a->buff_wr, p, 0);
+
+#ifdef AFCGI_DEBUG
+		fprintf(stderr, "CLI packet header:\n"
+		                "  version    : %d\n"
+		                "  type       : AFCGI_STDOUT(%d)\n"
+		                "  request_id : %d\n"
+		                "  content_len: %d\n"
+		                "  padding_len: 0\n",
+		                AFCGI_VERSION, AFCGI_STDOUT, request_id, data);
+#endif
+
 	}
 }
 
