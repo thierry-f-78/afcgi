@@ -278,7 +278,7 @@ void afcgi_stop_write(struct afcgi_sess *s);
  * @param len buffer len
  * @return size writed
  */
-static inline int afcgi_write(struct afcgi_sess *s, char *buff, int len) {
+static inline int afcgi_write(struct afcgi_sess *s, const char *buff, int len) {
 	return rotbuffer_read_buff(&s->afcgi->buff_wr, buff, len);
 }
 
