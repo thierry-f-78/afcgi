@@ -21,7 +21,8 @@
 
 #define AFCGI_VERSION 1
 #define AFCGI_HEADER_LEN  8
-#define AFCGI_BUFFER_SIZE (1<<16)
+#define AFCGI_RD_BUFFER_SIZE (1<<16)
+#define AFCGI_WR_BUFFER_SIZE (1<<16)
 #define AFCGI_MAX_SESSION (1<<16)
 
 /** The names of the different callbacks */
@@ -139,14 +140,14 @@ struct afcgi {
 	struct afcgi_sess *sess[AFCGI_MAX_SESSION];
 
 	// read
-	char buffer[AFCGI_BUFFER_SIZE];
+	char buffer[AFCGI_RD_BUFFER_SIZE];
 	char *buff;
 	int buff_len;
 
 	// write
 	struct afcgi_sess *write;
 	struct rotbuffer buff_wr;
-	char buffer_write[AFCGI_BUFFER_SIZE];
+	char buffer_write[AFCGI_WR_BUFFER_SIZE];
 
 	// end
 	struct afcgi_sess *end;

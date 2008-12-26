@@ -410,7 +410,35 @@ static void new_write(int fd, void *arg) {
 	rotbuffer_write_fd(&a->buff_wr, a->fd);
 
 	// check for end
-	while (rotbuffer_free_size(&a->buff_wr) > 16 && a->end != NULL) {
+	while (rotbuffer_free_size(&a->buff_wr) > 24 && a->end != NULL) {
+
+		// build header
+		// unsigned char version;
+		rotbuffer_add_byte_wc(&a->buff_wr, AFCGI_VERSION);
+		// unsigned char type;
+		rotbuffer_add_byte_wc(&a->buff_wr, AFCGI_STDOUT);
+		// unsigned char requestIdB1;
+		// unsigned char requestIdB0;
+		rotbuffer_add_byte_wc(&a->buff_wr, a->end->request_id >> 8);
+		rotbuffer_add_byte_wc(&a->buff_wr, a->end->request_id & 0x00ff);
+		// unsigned char contentLengthB1;
+		// unsigned char contentLengthB0;
+		rotbuffer_add_byte_wc(&a->buff_wr, 0);
+		rotbuffer_add_byte_wc(&a->buff_wr, 0);
+		// unsigned char paddingLength;
+		rotbuffer_add_byte_wc(&a->buff_wr, 0);
+		// unsigned char reserved;
+		rotbuffer_add_byte_wc(&a->buff_wr, 0);
+
+#ifdef AFCGI_DEBUG
+		fprintf(stderr, "CLI packet header:\n"
+		                "  version    : %d\n"
+		                "  type       : AFCGI_STDOUT(%d)\n"
+		                "  request_id : %d\n"
+		                "  content_len: 0\n"
+		                "  padding_len: 0\n",
+		                AFCGI_VERSION, AFCGI_STDOUT, request_id);
+#endif
 
 		// unsigned char version;
 		rotbuffer_add_byte_wc(&a->buff_wr, AFCGI_VERSION);
@@ -537,7 +565,7 @@ static void new_conn(int l, void *arg) {
 	a->buff_wr.buff_end = a->buff_wr.buff;
 	a->buff_wr.buff_start = a->buff_wr.buff;
 	a->buff_wr.buff_len = 0;
-	a->buff_wr.buff_size = AFCGI_BUFFER_SIZE;
+	a->buff_wr.buff_size = AFCGI_WR_BUFFER_SIZE;
 	a->end = NULL;
 	ev_poll_fd_set(fd, EV_POLL_READ, new_read, a);
 }
