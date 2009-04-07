@@ -245,8 +245,7 @@ static void new_read(int fd, void *arg) {
 		a->buff_len = 0;
 
 	case WAIT_PARAMS:
-
-		sz = a->c.content_len - a->buff_len;
+		sz = ( a->c.content_len + a->c.padding_len ) - a->buff_len;
 		sz = read(a->fd, a->buff, sz);
 		if (sz <= 0) {
 			conn_bye(a);
@@ -256,10 +255,11 @@ static void new_read(int fd, void *arg) {
 		if (sz > 0)
 			a->buff_len += sz;
 
-		if (a->buff_len < a->c.content_len)
+		if (a->buff_len < ( a->c.content_len + a->c.padding_len ) )
 			return;
 
 		// parsing des headers
+		a->buff_len = a->c.content_len;
 		hdr = a->buffer;
 
 		while(hdr < a->buffer + a->buff_len) {
@@ -342,7 +342,7 @@ static void new_read(int fd, void *arg) {
 
 	case WAIT_AFCGI_STDIN:
 
-		sz = a->c.content_len - a->buff_len;
+		sz = ( a->c.content_len + a->c.padding_len ) - a->buff_len;
 		sz = read(a->fd, a->buff, sz);
 		if (sz <= 0) {
 			conn_bye(a);
@@ -352,12 +352,12 @@ static void new_read(int fd, void *arg) {
 		if (sz > 0)
 			a->buff_len += sz;
 
-		if (a->buff_len < a->c.content_len)
+		if (a->buff_len < ( a->c.content_len + + a->c.padding_len ) )
 			return;
 
 		// callback data ready
 		if (s->on_receive != NULL)
-			s->on_receive(s, s->arg, a->buff_len);
+			s->on_receive(s, s->arg, a->c.content_len);
 		goto case_WAIT_HEADER;
 
 	/********************************************
@@ -378,7 +378,7 @@ static void new_read(int fd, void *arg) {
 		a->buff_len = 0;
 
 	case WAIT_AFCGI_DATA:
-		sz = a->c.content_len - a->buff_len;
+		sz = ( a->c.content_len + a->c.padding_len ) - a->buff_len;
 		sz = read(a->fd, a->buff, sz);
 		if (sz <= 0) {
 			conn_bye(a);
@@ -388,12 +388,12 @@ static void new_read(int fd, void *arg) {
 		if (sz > 0)
 			a->buff_len += sz;
 
-		if (a->buff_len < a->c.content_len)
+		if (a->buff_len < ( a->c.content_len + a->c.padding_len ) )
 			return;
 
 		// callback data
 		if (s->on_data_recv != NULL)
-			s->on_data_recv(s, s->arg, a->buff_len);
+			s->on_data_recv(s, s->arg, a->c.content_len);
 		goto case_WAIT_HEADER;
 
 	}
