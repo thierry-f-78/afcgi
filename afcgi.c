@@ -484,6 +484,7 @@ static void new_write(int fd, void *arg) {
 
 		// free session
 		sess = a->end;
+		sess->on_end(sess, sess->arg);
 		a->end = a->end->end_next;
 		a->sess[sess->request_id] = NULL;
 		free_afcgi_sess(sess);

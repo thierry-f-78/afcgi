@@ -39,6 +39,8 @@ enum afcgi_callback_names {
 	ON_END_OF_DATA,
 	/** Called when application can write on STDIN, STDERR */
 	ON_WRITE,
+	/** Called before destorying fastcgi session */
+	ON_END,
 	/** Called when server sent abort */
 	ON_ABORT
 };
@@ -116,6 +118,7 @@ struct afcgi_sess {
 	afcgi_cb on_run;
 	afcgi_cb on_abort;
 	afcgi_cb_data on_write;
+	afcgi_cb on_end;
 
 	// links
 	struct afcgi *afcgi;
@@ -222,6 +225,10 @@ afcgi_set_cb_ON_RUN(struct afcgi_sess *s, afcgi_cb cb) {
 static inline void 
 afcgi_set_cb_ON_END_OF_DATA(struct afcgi_sess *s, afcgi_cb cb) {
 	s->on_end_of_data = cb;
+}
+static inline void 
+afcgi_set_cb_ON_END(struct afcgi_sess *s, afcgi_cb cb) {
+	s->on_end = cb;
 }
 static inline void 
 afcgi_set_cb_ON_ABORT(struct afcgi_sess *s, afcgi_cb cb) {
