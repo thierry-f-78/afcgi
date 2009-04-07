@@ -172,6 +172,12 @@ struct afcgi_binder {
 void afcgi_init(int maxconn, struct ev_timeout_basic_node *tm);
 
 /**
+ * this option close socket after transmitting data 
+ * this is usefull with bad fastcgi serveurs (nginx 0.6.36)
+ */
+void afcgi_do_close_socket(void);
+
+/**
  * Bind network address or socket 
  * @param bind   network address or socket (or NULL for stdin)
  * @param on_new callback called for new connexion

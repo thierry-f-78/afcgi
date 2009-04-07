@@ -10,6 +10,7 @@
 // #define AFCGI_DEBUG
 
 int afcgi_global_maxconn;
+static int afcgi_do_close = 0;
 
 enum afcgi_types {
 	                               /*  WS->App   management  stream */
@@ -437,7 +438,7 @@ static void new_write(int fd, void *arg) {
 		                "  request_id : %d\n"
 		                "  content_len: 0\n"
 		                "  padding_len: 0\n",
-		                AFCGI_VERSION, AFCGI_STDOUT, request_id);
+		                AFCGI_VERSION, AFCGI_STDOUT, a->end->request_id);
 #endif
 
 		// unsigned char version;
@@ -488,6 +489,12 @@ static void new_write(int fd, void *arg) {
 		a->end = a->end->end_next;
 		a->sess[sess->request_id] = NULL;
 		free_afcgi_sess(sess);
+
+		/* */
+		if (afcgi_do_close == 1) {
+			conn_bye(a);
+			return;
+		}
 	}
 
 	// callback
@@ -629,8 +636,13 @@ int afcgi_bind(char *bind, afcgi_cb on_new, void *arg) {
 	return 0;
 }
 
+void afcgi_do_close_socket(void) {
+	afcgi_do_close = 1;
+}
+
 void afcgi_init(int maxconn, struct ev_timeout_basic_node *tm) {
 	afcgi_global_maxconn = maxconn;
+	afcgi_do_close = 0;
 	poll_select_register();
 	ev_timeout_init(tm);
 	ev_poll_init(maxconn, tm);
