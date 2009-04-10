@@ -140,6 +140,7 @@ struct afcgi {
 	} c;
 	char *head;
 	struct afcgi_binder *binder;
+	int max_id;
 	struct afcgi_sess *sess[AFCGI_MAX_SESSION];
 
 	// read

@@ -71,17 +71,9 @@ static void conn_close(struct afcgi *a) {
 static void conn_bye(struct afcgi *a) {
 	int i;
 
-	if (afcgi_do_close == 1)
-		for(i=0; i<AFCGI_MAX_SESSION; i++)
-			if (a->sess[i] != NULL) {
-				a->sess[i]->on_abort(a->sess[i], a->sess[i]->arg);
-				break;
-			}
-
-	else
-		for(i=0; i<AFCGI_MAX_SESSION; i++)
-			if (a->sess[i] != NULL)
-				a->sess[i]->on_abort(a->sess[i], a->sess[i]->arg);
+	for(i=a->max_id; i>=0; i--)
+		if (a->sess[i] != NULL)
+			a->sess[i]->on_abort(a->sess[i], a->sess[i]->arg);
 
 	conn_close(a);
 }
@@ -214,6 +206,8 @@ static void new_read(int fd, void *arg) {
 		s->request_id = a->c.request_id;
 		s->afcgi= a;
 		a->sess[s->request_id] = s;
+		if (s->request_id > a->max_id)
+			a->max_id = s->request_id;
 
 	case WAIT_REQUEST_HDR:
 		sz = 8 + (char *)&s->h - s->head;
@@ -424,6 +418,7 @@ static void new_write(int fd, void *arg) {
 	char *p, *p2;
 	int data;
 	int request_id;
+	int i;
 	
 	// try writing
 	rotbuffer_write_fd(&a->buff_wr, a->fd);
@@ -500,6 +495,18 @@ static void new_write(int fd, void *arg) {
 		rotbuffer_add_byte_wc(&a->buff_wr, 0);
 		rotbuffer_add_byte_wc(&a->buff_wr, 0);
 		rotbuffer_add_byte_wc(&a->buff_wr, 0);
+
+		/* update max id */
+		if (afcgi_do_close == 0 &&
+		    sess->request_id == a->max_id) {
+			a->max_id = -1;
+			for (i = a->max_id - 1; i >= 0; i--) {
+				if (a->sess[i] != NULL) {
+					a->max_id = i;
+					break;
+				}
+			}
+		}
 
 		// free session
 		sess = a->end;
@@ -593,6 +600,7 @@ static void new_conn(int l, void *arg) {
 	a->buff_wr.buff_len = 0;
 	a->buff_wr.buff_size = AFCGI_WR_BUFFER_SIZE;
 	a->end = NULL;
+	a->max_id = -1;
 	ev_poll_fd_set(fd, EV_POLL_READ, new_read, a);
 }
 
