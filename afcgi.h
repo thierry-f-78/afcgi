@@ -297,6 +297,23 @@ static inline int afcgi_write(struct afcgi_sess *s, const char *buff, int len) {
 }
 
 /**
+ * read data
+ * @param s afcgi session identifier
+ * @param buff buffer
+ * @param len buffer len
+ * @return size read
+ */
+static inline int afcgi_read(struct afcgi_sess *s, char *buff, int len) {
+	if (s->afcgi->buff_len < len) {
+		memcpy(buff, s->afcgi->buff, s->afcgi->buff_len);
+		return s->afcgi->buff_len;
+	} else {
+		memcpy(buff, s->afcgi->buff, len);
+		return len;
+	}
+}
+
+/**
  * afcgi session end
  * @param s afcgi session identifier
  * @param rs return status
