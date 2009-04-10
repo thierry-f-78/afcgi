@@ -61,11 +61,29 @@ static void free_afcgi(struct afcgi *a) {
 	free(a);
 }
 
-static void conn_bye(struct afcgi *a) {
+static void conn_close(struct afcgi *a) {
 	close(a->fd);
 	ev_poll_fd_clr(a->fd, EV_POLL_READ);
 	ev_poll_fd_clr(a->fd, EV_POLL_WRITE);
 	free_afcgi(a);
+}
+
+static void conn_bye(struct afcgi *a) {
+	int i;
+
+	if (afcgi_do_close == 1)
+		for(i=0; i<AFCGI_MAX_SESSION; i++)
+			if (a->sess[i] != NULL) {
+				a->sess[i]->on_abort(a->sess[i], a->sess[i]->arg);
+				break;
+			}
+
+	else
+		for(i=0; i<AFCGI_MAX_SESSION; i++)
+			if (a->sess[i] != NULL)
+				a->sess[i]->on_abort(a->sess[i], a->sess[i]->arg);
+
+	conn_close(a);
 }
 
 static void new_read(int fd, void *arg) {
@@ -492,7 +510,7 @@ static void new_write(int fd, void *arg) {
 
 		/* */
 		if (afcgi_do_close == 1) {
-			conn_bye(a);
+			conn_close(a);
 			return;
 		}
 	}
