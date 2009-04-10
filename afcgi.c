@@ -190,6 +190,14 @@ static void new_read(int fd, void *arg) {
 	********************************************/
 	case_WAIT_REQUEST_HDR:
 
+		/* if more than one fastcgi is incoming, and the flag
+		 * afcgi_do_close is set, is error. the connection is closed
+		 */
+		if (afcgi_do_close == 1 && a->max_id != -1) {
+			conn_bye(a);
+			return;
+		}
+
 		// sanity check: the header must be 8 octets
 		if (a->c.content_len != 8) {
 			conn_bye(a);
