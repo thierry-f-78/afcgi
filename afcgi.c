@@ -72,7 +72,7 @@ static void conn_bye(struct afcgi *a) {
 	int i;
 
 	for(i=a->max_id; i>=0; i--)
-		if (a->sess[i] != NULL)
+		if (a->sess[i] != NULL && a->sess[i]->on_abort != NULL)
 			a->sess[i]->on_abort(a->sess[i], a->sess[i]->arg);
 
 	conn_close(a);
