@@ -386,6 +386,9 @@ static void new_read(int fd, void *arg) {
 		if (a->buff_len < ( a->c.content_len + + a->c.padding_len ) )
 			return;
 
+		/* adjust buffer len */
+		a->buff_len -= a->c.padding_len;
+
 		// callback data ready
 		if (s->on_receive != NULL)
 			s->on_receive(s, s->arg, a->c.content_len);
@@ -421,6 +424,9 @@ static void new_read(int fd, void *arg) {
 
 		if (a->buff_len < ( a->c.content_len + a->c.padding_len ) )
 			return;
+
+		/* adjust buffer len */
+		a->buff_len -= a->c.padding_len;
 
 		// callback data
 		if (s->on_data_recv != NULL)
