@@ -347,9 +347,9 @@ static void new_read(int fd, void *arg) {
 			shdr->next      = s->hdr;
 			s->hdr          = shdr;
 
-			/*
-			fprintf(stderr, "(%d,%d)\t<%s>: <%s>\n", attr_sz, data_sz, sa, sb);
-			*/
+#ifdef AFCGI_DEBUG
+			fprintf(stderr, "(%d,%d)\t<%s>:<%s>\n", attr_sz, data_sz, sa, sb);
+#endif
 		}
 
 		goto case_WAIT_HEADER;
