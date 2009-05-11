@@ -102,6 +102,7 @@ void afcgi_set_log_opt(uint32_t flags, ...){
 }
 
 #define AFCGI_LOG_MSG_BUF 4096
+#define AFCGI_MAX_INFO_LEN 56
 void __afcgi_logmsg(int priority, const char *file, const char *function,
                     int line, char *fmt, ...) {
 	va_list ap;
@@ -209,30 +210,39 @@ void __afcgi_logmsg(int priority, const char *file, const char *function,
 	len = 0;
 	switch(switch_flags){
 		case AFCGI_LOG_DSP_FILE:
-			len = snprintf(str_current, 128, "[%s] ", file);
+			len = snprintf(str_current, AFCGI_MAX_INFO_LEN, "[%s", file);
 			break;
 		case AFCGI_LOG_DSP_FUNCTION:
-			len = snprintf(str_current, 128, "[%s] ", function);
+			len = snprintf(str_current, AFCGI_MAX_INFO_LEN, "[%s", function);
 			break;
 		case AFCGI_LOG_DSP_LINE:
-			len = snprintf(str_current, 128, "[%d] ", line);
+			len = snprintf(str_current, AFCGI_MAX_INFO_LEN, "[%d", line);
 			break;
 		case AFCGI_LOG_DSP_FILE|AFCGI_LOG_DSP_FUNCTION:
-			len = snprintf(str_current, 128, "[%s %s] ", function, file);
+			len = snprintf(str_current, AFCGI_MAX_INFO_LEN, "[%s %s", function, file);
 			break;
 		case AFCGI_LOG_DSP_FILE|AFCGI_LOG_DSP_LINE:
-			len = snprintf(str_current, 128, "[%s:%d] ", file, line);
+			len = snprintf(str_current, AFCGI_MAX_INFO_LEN, "[%s:%d", file, line);
 			break;
 		case AFCGI_LOG_DSP_FUNCTION|AFCGI_LOG_DSP_LINE:
-			len = snprintf(str_current, 128, "[%s %d] ", function, line);
+			len = snprintf(str_current, AFCGI_MAX_INFO_LEN, "[%s %d", function, line);
 			break;
 		case AFCGI_LOG_DSP_FILE|AFCGI_LOG_DSP_FUNCTION|AFCGI_LOG_DSP_LINE:
-			len = snprintf(str_current, 128, "[%s %s:%d] ",
+			len = snprintf(str_current, AFCGI_MAX_INFO_LEN, "[%s %s:%d",
 			               function, file, line);
 			break;
 	}
-	str_current += len;
-	clen += len;
+	if (len > AFCGI_MAX_INFO_LEN) {
+		str_current += AFCGI_MAX_INFO_LEN - 1;
+		clen += AFCGI_MAX_INFO_LEN - 1;
+	} else {
+		str_current += len;
+		clen += len;
+	}
+	str_current[0] = ']';
+	str_current[1] = ' ';
+	str_current += 2;
+	clen += 2;
 	
 	// generate message
 	str_msg = str_current;
