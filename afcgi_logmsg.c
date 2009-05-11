@@ -198,7 +198,7 @@ void __afcgi_logmsg(int priority, const char *file, const char *function,
 			str_current[0] = ':';
 			str_current[1] = ' ';
 			str_current += 2;
-			clen++;
+			clen += 2;
 		}
 	}
 
