@@ -111,6 +111,7 @@ void __afcgi_logmsg(int priority, const char *file, const char *function,
 	time_t current_t;
 	struct tm *tm;
 	int len;
+	int tmp_len;
 	int clen;
 	int display_two_points;
 	uint32_t switch_flags;
@@ -235,10 +236,14 @@ void __afcgi_logmsg(int priority, const char *file, const char *function,
 	
 	// generate message
 	str_msg = str_current;
+	tmp_len = AFCGI_LOG_MSG_BUF - clen;
 	va_start(ap, fmt);
-	len = vsnprintf(str_current, AFCGI_LOG_MSG_BUF - clen, fmt, ap);
+	len = vsnprintf(str_current, tmp_len, fmt, ap);
 	va_end(ap);
-	clen += len;
+	if (len > tmp_len)
+		clen += tmp_len - 1;
+	else
+		clen += len;
 
 	/* check for unprintable characters */
 	for (p = str_current; *p != 0; p++)
