@@ -250,11 +250,15 @@ void __afcgi_logmsg(int priority, const char *file, const char *function,
 		if (!isprint(*p))
 			*p = '.';
 
+	/* set line feed */
+	*p = '\n';
+
 	// out on system standard error
-	if((afcgi_log_flags & AFCGI_LOG_STDERR) != 0){
-		fprintf(stderr, "%s\n",  buffer);
-		fflush(stderr);
-	}
+	if ((afcgi_log_flags & AFCGI_LOG_STDERR) != 0)
+		write(2, buffer, clen + 1);
+
+	/* remove line feed */
+	*p = '\0';
 
 	// out on syslog
 	#ifdef AFCGI_USE_SYSLOG
