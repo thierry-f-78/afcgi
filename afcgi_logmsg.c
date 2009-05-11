@@ -10,6 +10,7 @@
 
 #include "afcgi.h"
 
+#include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -113,6 +114,7 @@ void __afcgi_logmsg(int priority, const char *file, const char *function,
 	int clen;
 	int display_two_points;
 	uint32_t switch_flags;
+	char *p;
 
 	// check if I do log this priority
 	if(priority > afcgi_log_level){
@@ -237,6 +239,11 @@ void __afcgi_logmsg(int priority, const char *file, const char *function,
 	len = vsnprintf(str_current, AFCGI_LOG_MSG_BUF - clen, fmt, ap);
 	va_end(ap);
 	clen += len;
+
+	/* check for unprintable characters */
+	for (p = str_current; *p != 0; p++)
+		if (!isprint(*p))
+			*p = '.';
 
 	// out on system standard error
 	if((afcgi_log_flags & AFCGI_LOG_STDERR) != 0){
