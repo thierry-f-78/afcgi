@@ -305,11 +305,11 @@ static void new_read(int fd, void *arg) {
 				hdr+=4;
 			}
 			if ((unsigned char)hdr[0] <= 0x7f) {
-				data_sz = hdr[0];
+				data_sz = (unsigned char)hdr[0];
 				hdr++;
 			} else {
-				data_sz = ((hdr[0] & 0x7f) << 24) + (hdr[1] << 16) +
-				           (hdr[2] << 8) + hdr[3];
+				data_sz = (((unsigned char)hdr[0] & 0x7f) << 24) | ((unsigned char)hdr[1] << 16) |
+				           ((unsigned char)hdr[2] << 8) | (unsigned char)hdr[3];
 				hdr+=4;
 			}
 
