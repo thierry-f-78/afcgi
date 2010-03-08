@@ -20,6 +20,13 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/utsname.h>
+#ifdef AFCGI_USE_SYSLOG
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <syslog.h>
+#endif
 
 // for displaying fate
 const char *mois[12] = {
@@ -43,12 +50,18 @@ static char     *afcgi_hostname;
 static int       afcgi_hostname_len;
 static char     *afcgi_application_name;
 static int       afcgi_application_name_len;
+#ifdef AFCGI_USE_SYSLOG
+static int       afcgi_facility;
+static int       afcgi_syslog_socket;
+static struct sockaddr_in afcgi_syslog_addr;
+#endif
 
 void afcgi_set_log_opt(uint32_t flags, ...){
 	struct utsname utsinfo;
 	int code_ret;
 	va_list ap;
 	char *str;
+	int port;
 
 	afcgi_log_flags |= flags;
 	va_start(ap, flags);
@@ -86,15 +99,24 @@ void afcgi_set_log_opt(uint32_t flags, ...){
 	// init option syslog
 	#ifdef AFCGI_USE_SYSLOG
 	if((flags & AFCGI_LOG_SYSLOG) != 0){
-		options = LOG_NDELAY;
+
+		/* get facility */
+		afcgi_facility = va_arg(ap, int);
+
+		/* get ip */
 		str = va_arg(ap, char *);
-		ident = strdup(str);
-		facility = va_arg(ap, int);
-		if(facility == 1){
-			options |= LOG_PID;
-		}
-		facility = va_arg(ap, int);
-		openlog(ident, options, facility);
+
+		/* get port */
+		port = va_arg(ap, int);
+
+		afcgi_syslog_addr.sin_family = AF_INET;
+		afcgi_syslog_addr.sin_port = htons(port);
+		code_ret = inet_pton(AF_INET, str, &afcgi_syslog_addr.sin_addr.s_addr);
+		if (code_ret <= 0)
+			afcgi_logmsg(LOG_ERR, "%s is not a valid address family", str);
+
+		/* open socket */
+		afcgi_syslog_socket = socket(PF_INET, SOCK_DGRAM, 0);
 	}
 	#endif
 
@@ -109,6 +131,8 @@ void __afcgi_logmsg(int priority, const char *file, const char *function,
 	char buffer[AFCGI_LOG_MSG_BUF];
 	char *str_msg;
 	char *str_current;
+	char *str_disp;
+	int syslog_hdrlen;
 	time_t current_t;
 	struct tm *tm;
 	int len;
@@ -123,18 +147,28 @@ void __afcgi_logmsg(int priority, const char *file, const char *function,
 		return;
 	}
 
+	str_disp = buffer;
 	str_current = buffer;
 	clen = 0;
 	display_two_points = 0;
+
+#ifdef AFCGI_USE_SYSLOG
+	/* build syslog header */
+	if((afcgi_log_flags & AFCGI_LOG_SYSLOG) != 0){
+		syslog_hdrlen = snprintf(str_current, AFCGI_LOG_MSG_BUF - clen,
+		                         "<%d>", afcgi_facility + priority);
+		clen += syslog_hdrlen;
+		str_current += syslog_hdrlen;
+	}
+#endif
 
 	// generate time tag
 	if((afcgi_log_flags & AFCGI_LOG_DSP_TIME) != 0){
 		current_t = time(NULL);
 		tm = localtime(&current_t);
-		len = snprintf(str_current, AFCGI_LOG_MSG_BUF,
-		               "%04d-%02d-%02d %02d:%02d:%02d",
-		               tm->tm_year + 1900,
-		               tm->tm_mon + 1,
+		len = snprintf(str_current, AFCGI_LOG_MSG_BUF - clen,
+		               "%s % 2d %02d:%02d:%02d",
+		               mois[tm->tm_mon],
 		               tm->tm_mday,
 		               tm->tm_hour,
 		               tm->tm_min,
@@ -181,11 +215,6 @@ void __afcgi_logmsg(int priority, const char *file, const char *function,
 
 	// generate pid
 	if((afcgi_log_flags & AFCGI_LOG_DSP_PID) != 0){
-		if(display_two_points && 1 < (AFCGI_LOG_MSG_BUF - clen)){
-			str_current[0] = ' ';
-			str_current++;
-			clen++;
-		}
 		len = snprintf(str_current, AFCGI_LOG_MSG_BUF - clen,
 		               "[%d]", getpid());
 		str_current += len;
@@ -265,15 +294,13 @@ void __afcgi_logmsg(int priority, const char *file, const char *function,
 
 	// out on system standard error
 	if ((afcgi_log_flags & AFCGI_LOG_STDERR) != 0)
-		write(2, buffer, clen + 1);
-
-	/* remove line feed */
-	*p = '\0';
+		write(2, buffer + syslog_hdrlen, clen + 1 - syslog_hdrlen);
 
 	// out on syslog
 	#ifdef AFCGI_USE_SYSLOG
 	if((afcgi_log_flags & AFCGI_LOG_SYSLOG) != 0){
-		syslog(priority, "%s",  buffer);
+		sendto(afcgi_syslog_socket, buffer, clen + 1, MSG_DONTWAIT | MSG_NOSIGNAL,
+		       (struct sockaddr *)&afcgi_syslog_addr, sizeof(afcgi_syslog_addr));
 	}
 	#endif
 }

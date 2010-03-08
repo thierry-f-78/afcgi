@@ -422,8 +422,7 @@ void __afcgi_logmsg(int priority, const char *file,
  * @param flags:  can takes this values:
  *
  *  - AFCGI_LOG_STDERR log on stderr output
- *  - AFCGI_LOG_SYSLOG log on syslog, this option require 3 parameters
- *     - (char *) program name (generally the same AFCGI_LOG_DSP_APP_NAME)
+ *  - AFCGI_LOG_SYSLOG log on syslog, this option require 4 parameters
  *     - (int) log pid ? : 1=>yes, 0=>no
  *     - (int) the facility code:
  *         - LOG_KERN     : kernel messages 
@@ -446,6 +445,9 @@ void __afcgi_logmsg(int priority, const char *file,
  *         - LOG_LOCAL5   : reserved for local use 
  *         - LOG_LOCAL6   : reserved for local use 
  *         - LOG_LOCAL7   : reserved for local use 
+ *     - (char *) syslog ip
+ *     - (int) syslog port
+ *
  *
  *  - AFCGI_LOG_DSP_LOG_LEVEL display only loglevel upper than the parameter.
  *                            This option require 1 parameter: 
