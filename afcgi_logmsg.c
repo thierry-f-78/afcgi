@@ -19,7 +19,6 @@
 #include <time.h>
 #include <errno.h>
 #include <string.h>
-#include <sys/utsname.h>
 #ifdef AFCGI_USE_SYSLOG
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -44,9 +43,11 @@ const char *mois[12] = {
 	"Dec"   
 };
 
+#define HOSTNAME_LEN 50
+
 static uint32_t  afcgi_log_flags = 0;
 static int       afcgi_log_level = LOG_WARNING;
-static char     *afcgi_hostname;
+static char      afcgi_hostname[HOSTNAME_LEN];
 static int       afcgi_hostname_len;
 static char     *afcgi_application_name;
 static int       afcgi_application_name_len;
@@ -57,7 +58,6 @@ static struct sockaddr_in afcgi_syslog_addr;
 #endif
 
 void afcgi_set_log_opt(uint32_t flags, ...){
-	struct utsname utsinfo;
 	int code_ret;
 	va_list ap;
 	char *str;
@@ -68,13 +68,10 @@ void afcgi_set_log_opt(uint32_t flags, ...){
 
 	// init options display hostname
 	if((flags & AFCGI_LOG_DSP_HOSTNAME) != 0){
-		code_ret = uname(&utsinfo);
-		if(code_ret == -1){
-			afcgi_logmsg(LOG_ERR, "uname[%d]: %s",
-			             errno, strerror(errno));
-			exit(1);
-		}
-		afcgi_hostname = strdup(utsinfo.sysname);
+		gethostname(afcgi_hostname, HOSTNAME_LEN);
+		if (afcgi_hostname[0] == '\0')
+			strncpy(afcgi_hostname, "localhost", HOSTNAME_LEN);
+		afcgi_hostname[HOSTNAME_LEN-1] = '\0';
 		afcgi_hostname_len = strlen(afcgi_hostname);
 	}
 
