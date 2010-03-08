@@ -128,7 +128,6 @@ void __afcgi_logmsg(int priority, const char *file, const char *function,
 	char buffer[AFCGI_LOG_MSG_BUF];
 	char *str_msg;
 	char *str_current;
-	char *str_disp;
 	int syslog_hdrlen;
 	time_t current_t;
 	struct tm *tm;
@@ -144,10 +143,10 @@ void __afcgi_logmsg(int priority, const char *file, const char *function,
 		return;
 	}
 
-	str_disp = buffer;
 	str_current = buffer;
 	clen = 0;
 	display_two_points = 0;
+	syslog_hdrlen = 0;
 
 #ifdef AFCGI_USE_SYSLOG
 	/* build syslog header */
