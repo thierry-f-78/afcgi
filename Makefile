@@ -1,4 +1,4 @@
-CPPFLAGS = 
+CPPFLAGS = -DAFCGI_USE_SYSLOG
 CFLAGS = -I../events/ -I../rotbuffer/ -O0 -g -Wall
 LDFLAGS = -L../events/ -levents -L../rotbuffer/ -lrotbuffer
 
