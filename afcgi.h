@@ -466,5 +466,24 @@ void __afcgi_logmsg(int priority, const char *file,
  */
 void afcgi_set_log_opt(uint32_t flags, ...);
 
+/**
+ * Fork program
+ *
+ * @param pidfile is the path of the pidfile. if NULL, does not write 
+ *        pid
+ * @return -1 if error, 0 if ok
+ */
+int afcgi_daemonize(char *pidfile);
+
+/**
+ * do right separation
+ *
+ * @param user the new user. This param can be NULL
+ * @param chroot_dir is the chrooted directory. this param can be NULL
+ * @param mask is the umask mask
+ * @return -1 if error, else 0
+ */
+int afcgi_separe(char *user, char *chroot_dir, mode_t mask);
+
 #endif
 
