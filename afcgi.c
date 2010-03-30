@@ -300,8 +300,8 @@ static void new_read(int fd, void *arg) {
 				attr_sz = hdr[0];
 				hdr++;
 			} else {
-				attr_sz = ((hdr[0] & 0x7f) << 24) + (hdr[1] << 16) +
-				           (hdr[2] << 8) + hdr[3];
+				attr_sz = (((unsigned char)hdr[0] & 0x7f) << 24) + ((unsigned char)hdr[1] << 16) +
+				           ((unsigned char)hdr[2] << 8) + (unsigned char)hdr[3];
 				hdr+=4;
 			}
 			if ((unsigned char)hdr[0] <= 0x7f) {
