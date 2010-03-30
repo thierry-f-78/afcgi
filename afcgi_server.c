@@ -112,15 +112,21 @@ int afcgi_separe(char *user, char *chroot_dir, mode_t mask) {
 		uid = pwd->pw_uid;
 		gid = pwd->pw_gid;
 
-		/* set default group of user */
-		if (setgid(gid) == -1) {
-			afcgi_logmsg(LOG_ERR, "setgid: %s", strerror(errno));
+		/* set default effective group of user */
+		if (setegid(gid) == -1) {
+			afcgi_logmsg(LOG_ERR, "setegid: %s", strerror(errno));
 			return -1;
 		}
 
 		/* use all groups assigned to user */
 		if (initgroups(user, gid) == -1){
 			afcgi_logmsg(LOG_ERR, "initgroups: %s", strerror(errno));
+			return -1;
+		}
+
+		/* set default group of user */
+		if (setgid(gid) == -1) {
+			afcgi_logmsg(LOG_ERR, "setgid: %s", strerror(errno));
 			return -1;
 		}
 
@@ -147,8 +153,16 @@ int afcgi_separe(char *user, char *chroot_dir, mode_t mask) {
 
 	/* change user */
 	if (user != NULL) {
+
+		/* set new user */
 		if (setuid(uid) == -1) {
 			afcgi_logmsg(LOG_ERR, "setuid: %s", strerror(errno));
+			return -1;
+		}
+
+		/* set effective user */
+		if (seteuid(uid) == -1) {
+			afcgi_logmsg(LOG_ERR, "seteuid: %s", strerror(errno));
 			return -1;
 		}
 	}
