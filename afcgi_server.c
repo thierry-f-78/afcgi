@@ -17,6 +17,9 @@
 #include <errno.h>
 #include <grp.h>
 #include <pwd.h>
+#include <sys/prctl.h>
+#include <sys/resource.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -95,6 +98,7 @@ int afcgi_separe(char *user, char *chroot_dir, mode_t mask) {
 	struct passwd *pwd = NULL;
 	uid_t uid = 0;
 	gid_t gid = 0;
+	struct rlimit limit;
 
 	/* privilege separation
 	 *
@@ -165,6 +169,12 @@ int afcgi_separe(char *user, char *chroot_dir, mode_t mask) {
 			afcgi_logmsg(LOG_ERR, "seteuid: %s", strerror(errno));
 			return -1;
 		}
+
+		/* for core dumps */
+		prctl(PR_SET_DUMPABLE, 1);
+		limit.rlim_cur = RLIM_INFINITY;
+		limit.rlim_max = RLIM_INFINITY;
+		setrlimit(RLIMIT_CORE, &limit);
 	}
 
 	/* set file rights */
