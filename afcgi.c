@@ -367,7 +367,7 @@ static void new_read(int fd, void *arg) {
 			goto case_WAIT_HEADER;
 		}
 
-		a->s = WAIT_PARAMS;
+		a->s = WAIT_AFCGI_STDIN;
 		a->buff = a->buffer;
 		a->buff_len = 0;
 
@@ -407,7 +407,7 @@ static void new_read(int fd, void *arg) {
 			goto case_WAIT_HEADER;
 		}
 
-		a->s = WAIT_PARAMS;
+		a->s = WAIT_AFCGI_DATA;
 		a->buff = a->buffer;
 		a->buff_len = 0;
 
