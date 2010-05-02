@@ -402,7 +402,7 @@ static void new_read(int fd, void *arg) {
 		if (sz > 0)
 			a->buff_len += sz;
 
-		if (a->buff_len < ( a->c.content_len + + a->c.padding_len ) )
+		if (a->buff_len < ( a->c.content_len + a->c.padding_len ) )
 			return;
 
 		/* adjust buffer len */
