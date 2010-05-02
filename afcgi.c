@@ -399,8 +399,8 @@ static void new_read(int fd, void *arg) {
 			return;
 		}
 
-		if (sz > 0)
-			a->buff_len += sz;
+		a->buff_len += sz;
+		a->buff += sz;
 
 		if (a->buff_len < ( a->c.content_len + a->c.padding_len ) )
 			return;
