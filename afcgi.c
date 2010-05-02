@@ -409,8 +409,10 @@ static void new_read(int fd, void *arg) {
 		a->buff_len -= a->c.padding_len;
 
 		// callback data ready
-		if (s->on_receive != NULL)
+		if (s->on_receive != NULL) {
+			a->buff = a->buffer;
 			s->on_receive(s, s->arg, a->c.content_len);
+		}
 		goto case_WAIT_HEADER;
 
 	/********************************************
