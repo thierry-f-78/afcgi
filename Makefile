@@ -1,6 +1,6 @@
 CPPFLAGS = -DAFCGI_USE_SYSLOG
-CFLAGS = -I../events/ -I../rotbuffer/ -O0 -g -Wall
-LDFLAGS = -L../events/ -levents -L../rotbuffer/ -lrotbuffer
+CFLAGS = -I../events/ -I../rotbuffer/ -I../ebtree/ -O0 -g -Wall
+LDFLAGS = -L../events/ -levents -L../rotbuffer/ -lrotbuffer -L../ebtree -lebtree
 
 OBJS = afcgi.o afcgi_logmsg.o afcgi_server.o
 
