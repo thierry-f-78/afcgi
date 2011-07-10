@@ -415,6 +415,7 @@ void __afcgi_logmsg(int priority, const char *file,
 #define AFCGI_LOG_DSP_TIME      0x00000200
 #define AFCGI_LOG_SYSLOG        0x00000400
 #define AFCGI_LOG_DSP_LOG_LEVEL 0x00001000
+#define AFCGI_LOG_DSP_LEVEL     0x00002000
 
 /** 
  * set log modes

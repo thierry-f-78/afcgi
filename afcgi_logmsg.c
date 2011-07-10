@@ -43,6 +43,38 @@ const char *mois[12] = {
 	"Dec"   
 };
 
+// for displaying log level
+#define LOG_EMERG_STR   "EMERG  "
+#define LOG_ALERT_STR   "ALERT  "
+#define LOG_CRIT_STR    "CRIT   "
+#define LOG_ERR_STR     "ERROR  "
+#define LOG_WARNING_STR "WARN   "
+#define LOG_NOTICE_STR  "NOTICE "
+#define LOG_INFO_STR    "INFO   "
+#define LOG_DEBUG_STR   "DEBUG  "
+
+const char *log_level_str[] = {
+	[LOG_EMERG]   = LOG_EMERG_STR,
+	[LOG_ALERT]   = LOG_ALERT_STR,
+	[LOG_CRIT]    = LOG_CRIT_STR,
+	[LOG_ERR]     = LOG_ERR_STR,
+	[LOG_WARNING] = LOG_WARNING_STR,
+	[LOG_NOTICE]  = LOG_NOTICE_STR,
+	[LOG_INFO]    = LOG_INFO_STR,
+	[LOG_DEBUG]   = LOG_DEBUG_STR
+};
+
+const int log_level_str_len[] = {
+	[LOG_EMERG]   = sizeof(LOG_EMERG_STR)   - 1,
+	[LOG_ALERT]   = sizeof(LOG_ALERT_STR)   - 1,
+	[LOG_CRIT]    = sizeof(LOG_CRIT_STR)    - 1,
+	[LOG_ERR]     = sizeof(LOG_ERR_STR)     - 1,
+	[LOG_WARNING] = sizeof(LOG_WARNING_STR) - 1,
+	[LOG_NOTICE]  = sizeof(LOG_NOTICE_STR)  - 1,
+	[LOG_INFO]    = sizeof(LOG_INFO_STR)    - 1,
+	[LOG_DEBUG]   = sizeof(LOG_DEBUG_STR)   - 1
+};
+
 #define HOSTNAME_LEN 50
 
 static uint32_t  afcgi_log_flags = 0;
@@ -225,6 +257,15 @@ void __afcgi_logmsg(int priority, const char *file, const char *function,
 			str_current[1] = ' ';
 			str_current += 2;
 			clen += 2;
+		}
+	}
+
+	// log level
+	if (afcgi_log_flags & AFCGI_LOG_DSP_LEVEL) {
+		if (len + log_level_str_len[priority] <= AFCGI_MAX_INFO_LEN) {
+			memcpy(str_current, log_level_str[priority], log_level_str_len[priority] + 1);
+			str_current += log_level_str_len[priority];
+			clen += log_level_str_len[priority];
 		}
 	}
 
