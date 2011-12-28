@@ -25,6 +25,10 @@
 #define AFCGI_WR_BUFFER_SIZE (1<<16)
 #define AFCGI_MAX_SESSION (1<<16)
 
+#define AFCGI_MALLOC malloc
+#define AFCGI_CALLOC calloc
+#define AFCGI_FREE   free
+
 /** The names of the different callbacks */
 enum afcgi_callback_names {
 	/** Called when all headers was received */

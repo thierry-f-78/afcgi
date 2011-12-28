@@ -74,11 +74,11 @@ static void free_afcgi_sess(struct afcgi_sess *s) {
 	while (h != NULL) {
 		n = h;
 		h = h->next;
-		free(n->name);
-		free(n->value);
-		free(n);
+		AFCGI_FREE(n->name);
+		AFCGI_FREE(n->value);
+		AFCGI_FREE(n);
 	}
-	free(s);
+	AFCGI_FREE(s);
 }
 
 static void free_afcgi(struct afcgi *a) {
@@ -87,7 +87,7 @@ static void free_afcgi(struct afcgi *a) {
 	for (i=0; i<AFCGI_MAX_SESSION; i++)
 		if (a->sess[i] != NULL)
 			free_afcgi_sess(a->sess[i]);
-	free(a);
+	AFCGI_FREE(a);
 }
 
 static void conn_close(struct afcgi *a) {
@@ -234,7 +234,7 @@ static void new_read(int fd, void *arg) {
 		}
 		a->s = WAIT_REQUEST_HDR;
 
-		s = (struct afcgi_sess *)calloc(1, sizeof(struct afcgi_sess));
+		s = (struct afcgi_sess *)AFCGI_CALLOC(1, sizeof(struct afcgi_sess));
 		if (s == NULL) {
 			conn_bye(a);
 			return;
@@ -332,15 +332,15 @@ static void new_read(int fd, void *arg) {
 				hdr+=4;
 			}
 
-			shdr = (struct afcgi_hdr *)malloc(sizeof(struct afcgi_hdr));
+			shdr = (struct afcgi_hdr *)AFCGI_MALLOC(sizeof(struct afcgi_hdr));
 			if (shdr == NULL) {
 				conn_bye(a);
 				return;
 			}
 
-			sa = malloc(attr_sz+1);
+			sa = AFCGI_MALLOC(attr_sz+1);
 			if (sa == NULL) {
-				free(hdr);
+				AFCGI_FREE(hdr);
 				conn_bye(a);
 				return;
 			}
@@ -348,10 +348,10 @@ static void new_read(int fd, void *arg) {
 			sa[attr_sz] = 0;
 			hdr += attr_sz;
 
-			sb = malloc(data_sz+1);
+			sb = AFCGI_MALLOC(data_sz+1);
 			if (sb == NULL) {
-				free(sa);
-				free(hdr);
+				AFCGI_FREE(sa);
+				AFCGI_FREE(hdr);
 				conn_bye(a);
 				return;
 			}
@@ -633,7 +633,7 @@ static void new_conn(int l, void *arg) {
 	struct afcgi_binder *binder = arg;
 
 	fd = ev_socket_accept(l, &addr);
-	a = (struct afcgi *)calloc(1, sizeof(struct afcgi));
+	a = (struct afcgi *)AFCGI_CALLOC(1, sizeof(struct afcgi));
 	a->fd = fd;
 	a->s = WAIT_HEADER;
 	a->head = (char *)&a->c;
@@ -688,7 +688,7 @@ int afcgi_bind(char *bind, afcgi_cb on_new, void *arg) {
 	struct afcgi_binder *binder;
 	int ret;
 
-	binder = (struct afcgi_binder *)malloc(sizeof(struct afcgi_binder));
+	binder = (struct afcgi_binder *)AFCGI_MALLOC(sizeof(struct afcgi_binder));
 	if (binder == NULL)
 		return -1;
 
