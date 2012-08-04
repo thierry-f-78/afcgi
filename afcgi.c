@@ -629,10 +629,11 @@ static void new_write(int fd, void *arg) {
 static void new_conn(int l, void *arg) {
 	int fd;
 	struct sockaddr_storage addr;
+	socklen_t len = sizeof(struct sockaddr_storage);
 	struct afcgi *a;
 	struct afcgi_binder *binder = arg;
 
-	fd = ev_socket_accept(l, &addr);
+	fd = ev_socket_accept(l, &addr, &len);
 	a = (struct afcgi *)AFCGI_CALLOC(1, sizeof(struct afcgi));
 	a->fd = fd;
 	a->s = WAIT_HEADER;
@@ -714,7 +715,7 @@ void afcgi_do_close_socket(void) {
 void afcgi_init(int maxconn, struct ev_timeout_basic_node *tm) {
 	afcgi_global_maxconn = maxconn;
 	afcgi_do_close = 0;
-	poll_select_register();
+	ev_poll_use_select();
 	ev_timeout_init(tm);
 	ev_poll_init(maxconn, tm);
 }
