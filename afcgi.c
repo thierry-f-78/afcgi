@@ -633,7 +633,7 @@ static void new_conn(int l, void *arg) {
 	struct afcgi *a;
 	struct afcgi_binder *binder = arg;
 
-	fd = ev_socket_accept(l, &addr, &len);
+	fd = ev_socket_accept(l, (struct sockaddr *)&addr, &len);
 	a = (struct afcgi *)AFCGI_CALLOC(1, sizeof(struct afcgi));
 	a->fd = fd;
 	a->s = WAIT_HEADER;
