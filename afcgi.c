@@ -629,9 +629,9 @@ static void new_write(int fd, void *arg) {
 static void new_conn(int l, void *arg) {
 	int fd;
 	struct sockaddr_storage addr;
-	socklen_t len = sizeof(struct sockaddr_storage);
 	struct afcgi *a;
 	struct afcgi_binder *binder = arg;
+	socklen_t len = sizeof(struct sockaddr_storage);
 
 	fd = ev_socket_accept(l, (struct sockaddr *)&addr, &len);
 	a = (struct afcgi *)AFCGI_CALLOC(1, sizeof(struct afcgi));

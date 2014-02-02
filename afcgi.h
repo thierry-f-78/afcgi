@@ -406,8 +406,7 @@ void afcgi_end(struct afcgi_sess *s, enum afcgi_return_status rs, int rc);
  * @param args args for log format
  */
 void __afcgi_logmsg(int priority, const char *file,
-                    const char *function, int line, char *fmt, ...)
-                    __attribute__((format(printf, 5, 6)));
+                    const char *function, int line, char *fmt, ...);
 
 
 #define AFCGI_LOG_STDERR        0x00000001
